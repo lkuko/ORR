@@ -60,13 +60,20 @@ ORR 将校园内的取件、带餐、代办需求，与接单、订单留言、�
 
 ## 界面预览
 
-以下为本项目开发版本的实际截图。任务详情使用本地排版测试数据，不代表真实用户或真实交易。
+以下为校园跑腿首页、我的订单和管理员后台界面。小程序截图中的任务为测试示例，不代表真实交易。
 
 <table>
-  <tr><th>管理台登录</th><th>任务详情工具栏</th></tr>
   <tr>
-    <td width="65%" valign="top"><img src="docs/images/admin-login.png" alt="管理台蓝白双栏登录界面" width="720"></td>
-    <td width="35%" valign="top"><img src="docs/images/task-detail.png" alt="任务详情中的取消提示、对齐后的复制编号和举报任务按钮，以及订单留言" width="300"></td>
+    <th width="50%" align="center">校园跑腿首页</th>
+    <th width="50%" align="center">我的订单</th>
+  </tr>
+  <tr>
+    <td align="center" valign="top"><img src="docs/images/campus-home.png" alt="校园跑腿首页，包含发布入口、分类筛选和待接任务" width="300"></td>
+    <td align="center" valign="top"><img src="docs/images/order-list.png" alt="我的订单列表，展示取消与完成状态" width="300"></td>
+  </tr>
+  <tr><th colspan="2" align="center">管理员后台</th></tr>
+  <tr>
+    <td colspan="2" align="center"><img src="docs/images/admin-console.png" alt="校园互助管理后台的已处理举报队列" width="1000"></td>
   </tr>
 </table>
 
