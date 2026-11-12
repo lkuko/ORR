@@ -1,48 +1,62 @@
 {
-  "compileType": "miniprogram",
-  "libVersion": "trial",
-  "packOptions": {
-    "ignore": [
-      { "type": "folder", "value": "server" },
-      { "type": "folder", "value": "admin" },
-      { "type": "folder", "value": "deploy" },
-      { "type": "folder", "value": "docs" },
-      { "type": "folder", "value": "scripts" },
-      { "type": "folder", "value": ".local" },
-      { "type": "folder", "value": ".git" },
-      { "type": "folder", "value": ".agents" }
-    ],
-    "include": []
-  },
+  "miniprogramRoot": "miniprogram/",
+  "cloudfunctionRoot": "cloudfunctions/",
   "setting": {
-    "coverView": true,
+    "urlCheck": true,
     "es6": true,
-    "postcss": true,
-    "minified": true,
     "enhance": true,
+    "postcss": true,
+    "preloadBackgroundData": false,
+    "minified": true,
+    "newFeature": true,
+    "coverView": true,
+    "nodeModules": false,
+    "autoAudits": false,
     "showShadowRootInWxmlPanel": true,
-    "packNpmRelationList": [],
+    "scopeDataCheck": false,
+    "uglifyFileName": false,
+    "checkInvalidKey": true,
+    "checkSiteMap": true,
+    "uploadWithSourceMap": true,
+    "compileHotReLoad": false,
+    "useMultiFrameRuntime": true,
+    "useApiHook": true,
+    "useApiHostProcess": true,
     "babelSetting": {
       "ignore": [],
       "disablePlugins": [],
       "outputPath": ""
     },
-    "uglifyFileName": false,
-    "uploadWithSourceMap": true,
+    "enableEngineNative": false,
+    "useIsolateContext": true,
+    "useCompilerModule": true,
+    "userConfirmedUseCompilerModuleSwitch": false,
+    "userConfirmedBundleSwitch": false,
     "packNpmManually": false,
+    "packNpmRelationList": [],
     "minifyWXSS": true,
-    "localPlugins": false,
-    "condition": false,
     "compileWorklet": false,
-    "disableUseStrict": false,
     "minifyWXML": true,
-    "useCompilerPlugins": false
-  },
-  "condition": {},
-  "editorSetting": {
-    "tabIndent": "auto",
-    "tabSize": 2
+    "localPlugins": false,
+    "disableUseStrict": false,
+    "useCompilerPlugins": false,
+    "condition": false,
+    "swc": false,
+    "disableSWC": true
   },
   "appid": "wxe8c489bc30b7340f",
+  "projectname": "ORR-cloudbase",
+  "libVersion": "3.18.0",
+  "condition": {},
+  "compileType": "miniprogram",
+  "srcMiniprogramRoot": "miniprogram/",
+  "packOptions": {
+    "ignore": [],
+    "include": []
+  },
+  "editorSetting": {
+    "tabIndent": "insertSpaces",
+    "tabSize": 2
+  },
   "simulatorPluginLibVersion": {}
 }

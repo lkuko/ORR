@@ -1,0 +1,21 @@
+.report-loading, .report-list { margin-top: 30rpx; }
+.report-list { border: 1rpx solid #e4e9f3; border-radius: 16rpx; background: #fff; }
+.report-record { padding: 28rpx; border-bottom: 1rpx solid #e4e9f3; }
+.report-record:last-child { border-bottom: 0; }
+.report-highlight { box-shadow: inset 6rpx 0 #2854d9; }
+.record-heading { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12rpx; }
+.record-title { font-size: 30rpx; font-weight: 600; }
+.report-status { flex: none; padding: 6rpx 14rpx; border-radius: 8rpx; color: #806640; background: #fff3d4; font-size: 23rpx; }
+.status-RESOLVED { color: #34715b; background: #e6f1ea; }
+.status-DISMISSED { color: #66738a; background: #eef1f7; }
+.target-summary { display: block; margin-top: 22rpx; padding: 18rpx 20rpx; border-left: 4rpx solid #dfe5f0; color: #52617a; background: #f8faff; font-size: 25rpx; line-height: 1.7; white-space: pre-wrap; }
+.target-fallback { display: block; margin-top: 18rpx; color: #66738a; font-size: 23rpx; }
+.record-section { margin-top: 22rpx; }
+.record-label, .record-content, .record-time, .result-title, .result-content { display: block; }
+.record-label { color: #66738a; font-size: 23rpx; }
+.record-content { margin-top: 6rpx; font-size: 27rpx; white-space: pre-wrap; line-height: 1.7; }
+.record-time { margin-top: 12rpx; font-size: 22rpx; color: #66738a; }
+.record-result { margin-top: 22rpx; padding-top: 20rpx; border-top: 1rpx solid #edf0f6; }
+.result-title { font-size: 25rpx; font-weight: 600; }
+.result-content { margin-top: 8rpx; font-size: 25rpx; color: #52617a; line-height: 1.7; white-space: pre-wrap; }
+.record-limit { display: block; padding: 20rpx; text-align: center; color: #66738a; font-size: 23rpx; }

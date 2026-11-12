@@ -1,0 +1,13 @@
+{
+  "name": "campus-api",
+  "version": "2.0.0",
+  "private": true,
+  "main": "index.js",
+  "engines": {
+    "node": ">=16.13"
+  },
+  "dependencies": {
+    "@cloudbase/node-sdk": "3.18.7",
+    "wx-server-sdk": "4.0.2"
+  }
+}

@@ -1,0 +1,227 @@
+{
+  "environment": "orr-d0gvuc3liba01ebf1",
+  "collections": [
+    {
+      "name": "users",
+      "rules": {
+        "read": false,
+        "write": false
+      },
+      "indexes": []
+    },
+    {
+      "name": "admin_users",
+      "rules": {
+        "read": false,
+        "write": false
+      },
+      "indexes": []
+    },
+    {
+      "name": "tasks",
+      "rules": {
+        "read": false,
+        "write": false
+      },
+      "indexes": [
+        {
+          "name": "open_tasks",
+          "fields": [
+            [
+              "status",
+              1
+            ],
+            [
+              "visibility",
+              1
+            ],
+            [
+              "createdAt",
+              -1
+            ]
+          ]
+        },
+        {
+          "name": "category_tasks",
+          "fields": [
+            [
+              "status",
+              1
+            ],
+            [
+              "visibility",
+              1
+            ],
+            [
+              "category",
+              1
+            ],
+            [
+              "createdAt",
+              -1
+            ]
+          ]
+        },
+        {
+          "name": "owner_orders",
+          "fields": [
+            [
+              "ownerId",
+              1
+            ],
+            [
+              "updatedAt",
+              -1
+            ]
+          ]
+        },
+        {
+          "name": "helper_orders",
+          "fields": [
+            [
+              "helperId",
+              1
+            ],
+            [
+              "updatedAt",
+              -1
+            ]
+          ]
+        },
+        {
+          "name": "cancellations",
+          "fields": [
+            [
+              "status",
+              1
+            ],
+            [
+              "updatedAt",
+              1
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "name": "task_messages",
+      "rules": {
+        "read": false,
+        "write": false
+      },
+      "indexes": [
+        {
+          "name": "task_messages",
+          "fields": [
+            [
+              "taskId",
+              1
+            ],
+            [
+              "createdAt",
+              -1
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "name": "task_events",
+      "rules": {
+        "read": false,
+        "write": false
+      },
+      "indexes": []
+    },
+    {
+      "name": "posts",
+      "rules": {
+        "read": false,
+        "write": false
+      },
+      "indexes": [
+        {
+          "name": "visible_posts",
+          "fields": [
+            [
+              "status",
+              1
+            ],
+            [
+              "createdAt",
+              -1
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "name": "comments",
+      "rules": {
+        "read": false,
+        "write": false
+      },
+      "indexes": [
+        {
+          "name": "visible_comments",
+          "fields": [
+            [
+              "postId",
+              1
+            ],
+            [
+              "status",
+              1
+            ],
+            [
+              "createdAt",
+              1
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "name": "reports",
+      "rules": {
+        "read": false,
+        "write": false
+      },
+      "indexes": [
+        {
+          "name": "report_queue",
+          "fields": [
+            [
+              "status",
+              1
+            ],
+            [
+              "createdAt",
+              1
+            ]
+          ]
+        },
+        {
+          "name": "reporter_history",
+          "fields": [["reporterId", 1], ["createdAt", -1]]
+        }
+      ]
+    },
+    {
+      "name": "admin_action_logs",
+      "rules": {
+        "read": false,
+        "write": false
+      },
+      "indexes": []
+    },
+    {
+      "name": "idempotency",
+      "rules": {
+        "read": false,
+        "write": false
+      },
+      "indexes": []
+    }
+  ]
+}

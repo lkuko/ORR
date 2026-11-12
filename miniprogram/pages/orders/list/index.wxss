@@ -1,0 +1,17 @@
+.page-title { font-size: 41rpx; }
+.segmented-control { display: flex; gap: 6rpx; margin-top: 30rpx; padding: 7rpx; border-radius: 18rpx; background: #e5ebf7; }
+.segmented-control .segment { flex: 1; min-width: 0; width: 0; min-height: 84rpx; margin: 0; padding: 20rpx 12rpx; border-radius: 13rpx; color: #66738a; background: transparent; font-size: 27rpx; font-weight: 500; }
+.segmented-control .segment.active { background: #fff; color: #2854d9; font-weight: 700; }
+.order-filters { display: flex; gap: 30rpx; margin: 18rpx 0 24rpx; }
+.order-filters .filter { flex: 1; width: 0; min-width: 0; min-height: 80rpx; margin: 0; padding: 20rpx 2rpx 14rpx; background: transparent; border-radius: 0; color: #66738a; font-weight: 400; font-size: 26rpx; border-bottom: 4rpx solid transparent; }
+.order-filters .filter.selected { color: #2854d9; border-bottom-color: #2854d9; font-weight: 600; }
+.order-row { margin-bottom: 20rpx; padding: 26rpx; border: 1rpx solid #e4e9f3; border-radius: 16rpx; background: #fff; }
+.order-top, .order-info, .order-next { display: flex; align-items: center; justify-content: space-between; gap: 20rpx; }
+.order-top status-tag { flex: none; }
+.order-number { flex: 1; min-width: 0; color: #66738a; font-size: 22rpx; text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.order-title { display: block; margin: 22rpx 0 16rpx; font-size: 31rpx; font-weight: 650; line-height: 1.5; overflow-wrap: break-word; }
+.order-area { flex: 1; min-width: 0; color: #66738a; font-size: 24rpx; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.order-reward { flex: none; color: #2854d9; font-size: 30rpx; font-weight: 700; }
+.order-next { margin-top: 22rpx; padding-top: 20rpx; border-top: 1rpx solid #edf0f6; font-size: 24rpx; color: #4b5e81; }
+.order-next > text:first-child { flex: 1; min-width: 0; }
+.chevron { flex: none; font-size: 36rpx; line-height: 1; color: #7d8ead; }

@@ -1,0 +1,22 @@
+<view class="page">
+  <text class="page-title">我的举报</text>
+  <text class="page-subtitle">查看你提交的问题，以及管理员的处理结果。</text>
+  <view wx:if="{{loading && !reports.length}}" class="loading-panel report-loading"><view class="loading-line"></view><view class="loading-line short"></view><text class="loading-label">正在读取举报记录…</text></view>
+  <empty-state wx:elif="{{error}}" title="举报记录暂时没能加载" description="{{error}}" button-text="重新加载" bind:action="load" />
+  <empty-state wx:elif="{{!reports.length}}" title="还没有举报记录" description="发现有问题的任务、帖子或评论，可在对应页面提交举报，处理结果会保留在这里。" button-text="去校园圈" bind:action="goToForum" />
+  <view wx:else class="report-list">
+    <view wx:for="{{reports}}" wx:key="id" class="report-record {{item.id === highlight ? 'report-highlight' : ''}}">
+      <view class="record-heading"><text class="record-title">{{item.targetLabel}}举报</text><text class="report-status status-{{item.status}}">{{item.statusLabel}}</text></view>
+      <text wx:if="{{item.targetSummary}}" class="target-summary">{{item.targetSummary}}</text>
+      <text wx:else class="target-fallback">{{item.targetLabel}} · {{item.targetNumber}}</text>
+      <view class="record-section"><text class="record-label">举报原因</text><text class="record-content">{{item.reason}}</text></view>
+      <text class="record-time">提交于 {{item.createdLabel}}</text>
+      <view class="record-result">
+        <text class="result-title">{{item.status === 'OPEN' ? '等待核实' : '处理结果'}}</text>
+        <text class="result-content">{{item.status === 'OPEN' ? '管理员正在核实，你可以稍后下拉刷新查看进度。' : (item.resolution || '管理员已完成处理。')}}</text>
+        <text wx:if="{{item.handledLabel}}" class="record-time">处理于 {{item.handledLabel}}</text>
+      </view>
+    </view>
+    <text wx:if="{{reports.length === 100}}" class="record-limit">显示最近 100 条举报记录</text>
+  </view>
+</view>

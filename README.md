@@ -1,53 +1,44 @@
-# 校园互助小程序
+# ORR · 微信云开发版
 
-微信原生 JS 小程序 + Node.js/Express API + MySQL + Vue 3 管理后台。小程序开发工具打开仓库根目录；服务端和管理后台是独立 npm 工程。
+单校区校园跑腿与文字论坛。原生 JavaScript 小程序，微信云函数和文档数据库，独立 Vue 管理台。报酬由双方线下结算。
 
-代码框架目录、模块职责和入口见 [docs/project-structure.md](docs/project-structure.md)。
+## 工程
 
-## 本机预览
+```text
+miniprogram/                    小程序界面、云服务适配
+cloudfunctions/campus-api/       身份和权限、业务模块、事务存储适配
+admin/                          管理员账号登录的独立网页
+database/                       集合、权限和索引声明
+scripts/                        校验、打包和真实云端冒烟
+tests/unit/                     客户端回归、校验与平台适配测试
+tests/integration/              本地业务集成（模拟数据库，不冒充云验收）
+docs/                           架构决定、部署和验收证据
+```
 
-1. PowerShell 执行 ./scripts/start-local-db.ps1。脚本在忽略目录 .local/ 初始化本项目专用 MySQL，监听 127.0.0.1:13306，不连接或修改本机其他 MySQL 实例。
-2. 执行 npm --prefix server run migrate 建表，再执行 npm --prefix server run create-admin -- admin '<自行设置的本地密码>' 创建本地管理账号；不要把实际密码写入仓库。
-3. 在一个 PowerShell 窗口运行 npm --prefix server run dev；另一个窗口运行 npm --prefix admin run dev。
-4. 管理后台地址为 http://localhost:5173。微信开发者工具打开本仓库，当前开发版已设为 api 模式，使用真实微信身份登录本机后端；任务、帖子、评论和举报保存到项目专用 MySQL。举报可在网页管理后台处理。
+## 当前边界
 
-接口可用 GET http://127.0.0.1:3000/health 检查。微信开发者工具中启用“不校验合法域名、web-view（业务域名）、TLS 版本以及 HTTPS 证书”。真实微信登录联调需填写服务端 AppID/Secret，并设置 WECHAT_LOGIN_MODE=wechat 和 CONTENT_CHECK_MODE=wechat；utils/config.js 中 developmentMode 已为 api。手机不能用电脑的 loopback 地址；同网络开发调试的待验收方案见下方内部测试说明，普通体验版和正式版仍需准备符合微信要求的 HTTPS API。
+- GitHub 源码基线：`lkuko/ORR` 的 `master@0ddb11d3a3bf65f5015575212fc6037d3dba3c5d`。
+- 重构分支：`codex/cloudbase-rebuild`；新工程目录 `E:\wechat\ORR2.0`。
+- 开发与体验环境：`orr-d0gvuc3liba01ebf1`；正式环境未绑定，正式构建默认拒绝调用。
+- 10 个业务页面保留校园服务站设计、留言发送锁及请求乱序修复，新增“我的举报”记录页。
+- 云函数、10 个受保护的集合和原管理网页已部署；当前 36 项本地测试通过。原重构版本已完成真实云端冒烟、两个真实账号关闭调试与跨网络验收；举报记录版本的 B 账号关闭调试复核确认举报记录及处理结果可见、导航图标正常、订单编号无溢出，具体范围见验收记录。
+- 最新源码已优化管理台四个模块和任务详情工具栏：“复制编号 / 举报任务”等宽同高对齐；管理台支持举报状态筛选、编号复制与窄屏布局。本轮在本地连接真实云环境验证，管理台托管页面和小程序体验版尚未部署这次界面更新。
+- 小程序开发版 `2.0.0-cloudbase.1` 曾上传；举报记录版本曾生成预览码。现有管理台入口：[ORR 管理台](https://orr-d0gvuc3liba01ebf1-1530627261.tcloudbaseapp.com/orr-admin/index.html)。
 
-需要测试两个参与者时，可在独立开发环境将 developmentMode 改为 api-demo，并设置后端 WECHAT_LOGIN_MODE=demo；此时“我的”提供两个测试账号切换，数据保存到 MySQL。不具备微信内容检查身份的测试账号还需在该独立开发环境关闭内容检查。不要在真实身份联调或生产环境使用这组设置。
+## 本地验证
 
-若仅看界面而不启动 API，可临时将 developmentMode 改为 demo；此时数据只在模拟器本机保存，与 API 数据库不互通。体验版、正式版以及无法识别的环境均禁用两种测试登录/数据模式。
+使用 Node.js 20+：
 
-本机数据库停止方式：./scripts/stop-local-db.ps1。只会停止由 start-local-db.ps1 创建且 PID 和数据目录匹配的进程。
+```powershell
+npm ci
+npm --prefix admin ci
+npm --prefix cloudfunctions/campus-api ci
+npm run verify
+node scripts/build-cloud.cjs
+```
 
-## 测试
+用微信开发者工具打开工程根目录，工具从 `miniprogram/` 编译客户端。
+云函数必须用 `scripts/build-cloud.cjs` 生成的 `.local/deploy/campus-api` 部署；业务代码合并成独立入口，SDK 在云端安装。
+项目与私有配置均打开 URL 检查，`app.json` 设置 `debug: false`。这不替代真实体验版关闭调试验收。
 
-~~~powershell
-npm --prefix server test
-npm --prefix server run test:integration
-npm --prefix admin run build
-~~~
-
-管理后台开发服务通过 Vite 将 /api 转发到本机 3000 端口，生产默认请求同源 /api/v1。独立 API 域名可通过构建时的 VITE_API_BASE_URL 指定；容器的同源反向代理使用 API_UPSTREAM 指定后端地址。
-
-集成测试只会连接以 _test 结尾的数据库，并在运行前清空该测试数据库中的表。它覆盖登录权限、任务校验、并发接单、地点与留言隔离、完成确认、取消争议、论坛评论、举报、下架和封禁。
-
-## 当前阶段：已有服务器内部测试
-
-当前复用已有阿里云服务器 `139.224.111.140`，拟通过 SSH 隧道连接开发电脑和同 Wi-Fi/热点测试手机；暂不新增云资源或配置公开发布域名。具体代码目录、只读检查、部署和隧道命令见 [docs/internal-testing.md](docs/internal-testing.md)。
-
-独立部署使用 `deploy/internal.compose.yaml`，包含 API、MySQL 和同源管理后台；云端入口只映射到 `127.0.0.1:18080`。已在现有服务器运行并通过健康检查、备份恢复；已授权暂停的 5 个 ARL 容器保留数据。开发版小程序当前经电脑 `10.100.167.235:18080` 的 SSH 隧道访问云端，后台地址为 `http://127.0.0.1:18080`。手机浏览器连通、微信开发调试登录和发布测试任务已验证；换网络时需更新电脑 LAN 地址和隧道。普通体验版、正式版仍不能依赖此 HTTP 地址。
-
-更换小程序 AppID 时，先更新本机 `server/.env` 与 `project.config.json`，再运行 `./scripts/rotate-cloud-wechat.ps1` 将微信凭证轮换到现有云端 API；步骤和回滚说明见 [docs/internal-testing.md](docs/internal-testing.md)。旧 AppID 下的订单不会自动归属新 AppID 的账号。
-
-## 后续公开试运营配置
-
-- 给服务端复制 server/.env.example 为 server/.env，配置正式 AppID/Secret、至少 32 字节随机 TOKEN_SECRET 和数据库账号。生产环境拒绝演示登录与关闭内容安全检查。
-- 数据库迁移使用 npm --prefix server run migrate；首个管理员通过 npm --prefix server run create-admin -- <账号> <至少12位密码> 单独创建。不要把 .env 或真实凭证提交到 Git。
-- 在 utils/config.js 中替换体验版、正式版 HTTPS API 域名；体验版和正式版不使用本地演示数据。
-- 生产建议部署两份无状态 API、云负载均衡和高可用托管 MySQL；管理后台静态资源可部署到 HTTPS 静态站点。大陆服务器需准备已备案域名，并将 API 域名加入小程序合法请求域名。
-
-具体步骤见 docs/operations.md 和 docs/api.md。
-
-后续公开试运营的阿里云资源方案和 Compose 部署步骤见 [docs/aliyun-deployment.md](docs/aliyun-deployment.md)，不属于本轮新增资源采购。当前验收结果与未完成事项见 [docs/acceptance.md](docs/acceptance.md)。
-
-本地可运行 `./scripts/verify-project.ps1` 一并检查小程序结构、后端单元/集成测试和后台构建；加上 `-WxmlCompiler <wcc.exe路径>` 可验证原生 WXML 编译。上线前另运行 `node scripts/check-miniprogram.cjs --release` 检查真实 HTTPS API 配置。
+产品规则见 [product.md](docs/product.md)，目录和职责见 [project-structure.md](docs/project-structure.md)，架构见 [architecture.md](docs/architecture.md)，当前验证状态见 [acceptance.md](docs/acceptance.md)，部署步骤见 [cloudbase-setup.md](docs/cloudbase-setup.md)。
