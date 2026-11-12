@@ -189,7 +189,7 @@ Copy-Item admin/.env.example admin/.env.local
 npm --prefix admin run dev
 ```
 
-开发服务启动后访问 **http://127.0.0.1:5173/**。
+开发服务启动后访问 http://127.0.0.1:5173。
 使用已配置的管理员账号登录；普通微信用户不会自动获得网页管理员权限。管理员密码不随仓库分发。
 
 ### 5. 运行检查
