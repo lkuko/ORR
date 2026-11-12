@@ -312,6 +312,9 @@ npm run verify
 | [部署说明](docs/cloudbase-setup.md) | 环境配置、集合索引、云函数和管理台发布 |
 | [前端设计](docs/frontend-design.md) | 校园服务站视觉规则与布局取舍 |
 | [验收记录](docs/acceptance.md) | 本地测试、真实云端和双账号真机证据 |
+| [简历项目描述](docs/resume-project.md) | 完整版、精简版、口述介绍及表述证据 |
+| [技术学习指南](docs/technical-study-guide.md) | 架构、事务、幂等、权限、前端竞态与学习练习 |
+| [面试一问一答](docs/interview-qa.md) | 60 道项目问题、参考答案与源码定位 |
 
 ## 文档参考
 
