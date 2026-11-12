@@ -79,7 +79,15 @@ GitHub 源码基线：0ddb11d3a3bf65f5015575212fc6037d3dba3c5d。
 - 小程序任务工具栏将编号和两个操作分成两行；“复制编号 / 举报任务”同高并排对齐。微信工具的 WXML、WXSS 编译通过；430px 模拟器注入长标题、取消原因与 64 位编号，页面 scrollWidth 为 430px，两个按钮顶边同为 397.48px、高度同为 50px。样例只修改模拟器页面数据，检查后重新导航，未写云数据库。
 - `npm run verify`：36/36 测试、10 页注册检查、管理台生产构建通过。新增回归覆盖筛选请求乱序、处理弹窗到请求结束的重复点击锁、取消操作及审计说明格式。构建仍有既有 CloudBase SDK 包体积提示，不影响构建完成。
 - 本机截图：`.local/admin-design-login.png`、`.local/admin-design-reports-desktop.png`、`.local/admin-design-reports-mobile.png`、`.local/admin-design-users-mobile.png`、`.local/admin-design-actions-320.png`、`.local/task-tools-aligned-430.png`。
-- 本轮界面更新以源码交付，未重新部署管理台静态托管、未上传新版小程序体验版；不计作本轮新界面的双账号真机验收。
+- 此轮最初以源码交付，随后已按下节记录更新管理台静态托管；小程序体验版尚未上传该工具栏更新，不计作新工具栏的双账号真机验收。
+
+## README 整理与管理台同步（2026-11-12）
+
+- README 按本项目实际功能补齐介绍、功能表、截图、架构图、任务状态机、配置表、启动步骤、发布说明、验收范围和常见问题。参考项目只用于文档组织，未引入其业务代码或截图。
+- 发布前，线上入口引用 `index-Di0hTLqX.js`、`index-CDe4PDK8.css`；本地构建引用 `index-CbEITrSu.js`、`index-W1dkNyu8.css`。新增核对脚本检测到入口不一致和新版资源 HTTP 404，确认为静态托管未随 GitHub 更新。
+- 使用已授权 CloudBase CLI `3.9.2`，只向测试环境的 `orr-admin/` 发布 `admin/dist/`。开启备份、资源先传、入口后传和远端校验，3/3 文件上传成功；备份前缀 `.cloudbase-backup/1794479896567/`。未使用清理旧文件选项，未改业务数据、权限、云函数或小程序版本。
+- 发布后 `node scripts/check-admin-hosting.cjs` 从实际站点读取并核对三个文件的 SHA-256，全部一致。`npm run verify` 的 36 项测试、10 页注册和管理台构建通过。
+- 浏览器访问原线上地址，经测试域名提示进入新版蓝白登录页；真实管理员登录成功。举报筛选读取 3 条已处理记录、用户管理读取 2 名用户、审计读取 10 条记录、取消争议为空；控制台 error / warn 为 0。截图保存在 `.local/admin-hosting-synced.png`。
 
 ## 真实环境耗时样本
 

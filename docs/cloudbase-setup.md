@@ -55,6 +55,30 @@ npm --prefix admin run build
 
 本地入口：`http://127.0.0.1:5173`。静态产物：`admin/dist/`，部署到云开发静态托管的 `orr-admin/` 路径，保留平台的 `__auth/` 等其他文件。构建使用相对资源路径。
 
+### 管理台发布流程
+
+本地开发服务直接读取源码；线上只读取静态托管文件。GitHub 的提交或合并不会自动更新网站。管理台代码变更后，使用以下流程单独发布（当前已验证 CloudBase CLI `3.9.2`）：
+
+```powershell
+# 首次或登录过期时，在浏览器完成授权；不在命令中填写永久密钥
+npx --yes --package @cloudbase/cli@3.9.2 tcb login --intl false
+
+npm run verify
+
+# 限定到已有测试环境与 orr-admin 路径；先备份，入口文件最后上传
+npx --yes --package @cloudbase/cli@3.9.2 tcb hosting deploy ./admin/dist orr-admin `
+  --env-id orr-d0gvuc3liba01ebf1 --safe --verify --entry index.html --json
+
+# 从实际访问地址读取 HTML、JS、CSS，逐个比较 SHA-256
+node scripts/check-admin-hosting.cjs
+```
+
+发布时不使用 `--prune`，保留旧资源及其他站点文件。CLI 返回的 `backupPrefix` 用于定位本次备份；本机保留发布回执。`check-admin-hosting.cjs` 检测到入口或资源缺失、不一致时返回非零退出码；可以用第一个参数指定其他管理台 URL。
+
+版本一致后，还需在浏览器检查登录、举报筛选、用户与审计数据读取。若 CDN 节点尚未刷新，先核对线上资源版本，再刷新浏览器，不把所有差异归因于缓存。
+
+2026-11-12 已将新版管理台发布到现有 `orr-admin/`：3 个文件上传成功，CLI 远端校验通过，实际访问地址的 `index.html`、`assets/index-CbEITrSu.js` 和 `assets/index-W1dkNyu8.css` 与本地构建逐字节一致。此次没有更新业务云函数或小程序体验版。
+
 已部署入口：<https://orr-d0gvuc3liba01ebf1-1530627261.tcloudbaseapp.com/orr-admin/index.html>。测试域名首次浏览会显示腾讯云访问提示；通过页面的“确定访问”后可进入管理台。
 
 管理员账号已通过短时受限初始化创建，凭据保存在本机 `.local/admin-credentials.json`，不进入 Git。真实网页登录、云端管理员角色和举报队列读取已经验证。上线前应由账号持有人设置自己的密码。
