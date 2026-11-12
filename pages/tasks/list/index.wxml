@@ -1,0 +1,14 @@
+<view class="page tasks-page">
+  <view class="dispatch">
+    <view class="dispatch-copy"><text class="dispatch-title">顺路，帮个忙。</text><text class="dispatch-description">取快递、带份餐，把小事托付给同学。</text><button class="publish-button" hover-class="button-pressed" bindtap="openCreate"><text class="plus">＋</text>发布任务</button></view>
+    <view class="route-art" aria-hidden="true"><view class="route-line"></view><view class="route-stop start">取</view><view class="route-stop finish">送</view><view class="route-package"><view></view></view></view>
+  </view>
+  <view wx:if="{{demoMode}}" class="mode-note">演示数据仅保存在当前设备</view>
+  <view class="search-box"><view class="search-icon" aria-hidden="true"></view><input placeholder="搜索任务标题或区域" placeholder-class="search-placeholder" value="{{keyword}}" bindinput="onSearch" confirm-type="search" aria-label="搜索任务"/><button wx:if="{{keyword}}" class="clear-search" bindtap="clearSearch" aria-label="清空搜索">×</button></view>
+  <scroll-view class="category-strip" scroll-x="true" show-scrollbar="false"><view class="category-list"><view wx:for="{{categories}}" wx:key="value" role="button" aria-label="按{{item.label}}筛选" class="category-item {{category === item.value ? 'selected' : ''}}" data-value="{{item.value}}" bindtap="selectCategory" hover-class="button-pressed">{{item.label}}</view></view></scroll-view>
+  <view class="section-heading"><text>{{keyword ? '搜索结果' : '待接任务'}}</text><text class="muted">{{loading ? '更新中' : tasks.length + ' 条'}}</text></view>
+  <view wx:if="{{loading && tasks.length === 0}}" class="loading-panel"><view class="loading-line short"></view><view class="loading-line"></view><view class="loading-line"></view><text class="loading-label">正在找同学们的任务…</text></view>
+  <empty-state wx:elif="{{error}}" title="任务暂时没能加载" description="{{error}}" button-text="重新加载" bind:action="loadTasks" />
+  <empty-state wx:elif="{{tasks.length === 0}}" title="{{keyword ? '没有匹配的任务' : '这里暂时没有待接任务'}}" description="{{keyword ? '换个标题关键词或区域试试。' : '有事情需要帮忙？发布后同学就能看到。'}}" button-text="{{keyword ? '清空搜索' : '发布任务'}}" bind:action="emptyAction" />
+  <view wx:else><task-card wx:for="{{tasks}}" wx:key="id" task="{{item}}" bind:open="openTask" /></view>
+</view>

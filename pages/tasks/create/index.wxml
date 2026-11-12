@@ -1,0 +1,18 @@
+<view class="page">
+  <text class="page-title">发布跑腿任务</text><text class="page-subtitle">写清楚需求，让顺路的同学更容易帮你。</text>
+  <view class="surface form-section"><text class="form-section-title">需要帮什么忙</text>
+    <view class="field"><text class="field-label">任务标题</text><input class="field-input" placeholder="例如：帮忙取一份快递" maxlength="100" value="{{form.title}}" data-field="title" bindinput="onInput" /></view>
+    <view class="field"><text class="field-label">任务类别</text><picker range="{{categoryOptions}}" range-key="label" value="{{categoryIndex}}" bindchange="onCategoryChange"><view class="field-select">{{categoryOptions[categoryIndex].label}}<text class="picker-mark">⌄</text></view></picker></view>
+    <view class="field"><text class="field-label">任务说明</text><textarea class="field-area" placeholder="描述要做的事，具体地点放在下面填写" maxlength="1000" value="{{form.description}}" data-field="description" bindinput="onInput" /><text class="field-hint">公开可见，请勿写入手机号或精确住址。</text></view>
+  </view>
+  <view class="surface form-section"><text class="form-section-title">在哪里交接</text>
+    <view class="field"><text class="field-label">大致区域</text><input class="field-input" placeholder="例如：东区宿舍 / 二食堂" maxlength="100" value="{{form.publicArea}}" data-field="publicArea" bindinput="onInput" /><text class="field-hint">所有浏览任务的同学都能看到。</text></view>
+    <view class="field"><text class="field-label">具体取送地点</text><input class="field-input" placeholder="例如：二食堂一楼 12 号窗口" maxlength="255" value="{{form.exactLocation}}" data-field="exactLocation" bindinput="onInput" /><text class="field-hint">接单后只对你和接单者开放。</text></view>
+  </view>
+  <view class="surface form-section"><text class="form-section-title">报酬与时间</text>
+    <view class="field"><text class="field-label">报酬金额（选填）</text><input class="field-input" type="digit" placeholder="不填表示互助" value="{{form.rewardAmount}}" data-field="rewardAmount" bindinput="onInput" /><text class="field-hint">双方线下结算，小程序不收款。</text></view>
+    <view class="field"><text class="field-label">截止日期（选填）</text><picker mode="date" value="{{deadlineDate}}" bindchange="onDateChange"><view class="field-select">{{deadlineDate || '选择日期'}}<text class="picker-mark">⌄</text></view></picker></view>
+  </view>
+  <button class="primary-button submit-button" loading="{{submitting}}" disabled="{{submitting}}" bindtap="submit" hover-class="button-pressed">发布任务</button>
+  <text class="form-note">发布后可以在“我的订单”查看进度。</text>
+</view>

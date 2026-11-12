@@ -1,0 +1,4 @@
+.writing-surface { margin-top: 28rpx; }
+.post-input { min-height: 450rpx; border: 0; padding: 0; background: #fff; line-height: 1.8; }
+.input-footer { display: flex; justify-content: space-between; gap: 16rpx; padding-top: 18rpx; border-top: 1rpx solid #edf0f6; color: #66738a; font-size: 23rpx; }
+.submit-button { display: block; width: 100%; }

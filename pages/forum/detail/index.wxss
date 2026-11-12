@@ -1,0 +1,20 @@
+.post-detail { padding: 26rpx 0 22rpx; border-bottom: 1rpx solid #e2e8f2; }
+.post-author-row, .comment-person, .comment-heading { display: flex; align-items: center; gap: 16rpx; }
+.post-author, .post-time { display: block; }
+.post-author { font-size: 27rpx; font-weight: 600; }
+.post-time { margin-top: 5rpx; color: #66738a; font-size: 22rpx; }
+.post-content { display: block; margin: 30rpx 0 22rpx; font-size: 31rpx; line-height: 1.85; white-space: pre-wrap; overflow-wrap: break-word; }
+.report-button { color: #66738a; }
+.comment-empty { padding: 28rpx 0; font-size: 25rpx; color: #66738a; }
+.comment-row { padding: 24rpx 0; border-bottom: 1rpx solid #e4e9f3; }
+.comment-person { align-items: flex-start; }
+.comment-avatar { width: 54rpx; height: 54rpx; border-radius: 16rpx; font-size: 23rpx; }
+.comment-main { min-width: 0; flex: 1; }
+.comment-heading { justify-content: space-between; }
+.comment-author { font-size: 25rpx; font-weight: 600; }
+.comment-time { font-size: 21rpx; color: #66738a; }
+.comment-content { display: block; margin-top: 10rpx; line-height: 1.7; overflow-wrap: break-word; }
+.report-comment { margin-top: 8rpx; color: #66738a; font-size: 23rpx; }
+.comment-composer { display: flex; align-items: flex-end; gap: 14rpx; margin-top: 32rpx; padding-bottom: env(safe-area-inset-bottom); }
+.comment-input { width: 0; flex: 1; min-height: 110rpx; max-height: 180rpx; background: #fff; }
+.comment-composer button { flex: none; min-width: 130rpx; }

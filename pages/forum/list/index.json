@@ -1,0 +1,5 @@
+{
+  "navigationBarTitleText": "校园圈",
+  "enablePullDownRefresh": true,
+  "usingComponents": { "empty-state": "/components/empty-state/index" }
+}

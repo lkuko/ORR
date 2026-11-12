@@ -1,0 +1,6 @@
+.tag { display: inline-block; padding: 7rpx 14rpx; border-radius: 9rpx; background: #eef1f7; color: #66738a; font-size: 23rpx; white-space: nowrap; line-height: 1.4; }
+.OPEN, .ASSIGNED { background: #eaf0ff; color: #2854d9; }
+.COMPLETION_PENDING { background: #fff3d4; color: #8b5b15; }
+.COMPLETED { background: #e7f3ee; color: #34715b; }
+.CANCEL_PENDING, .CANCEL_DISPUTED { background: #fff0e5; color: #9b552b; }
+.CANCELLED { background: #f0f2f6; color: #66738a; }

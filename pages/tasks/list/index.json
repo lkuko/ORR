@@ -1,0 +1,5 @@
+{
+  "navigationBarTitleText": "校园跑腿",
+  "enablePullDownRefresh": true,
+  "usingComponents": { "task-card": "/components/task-card/index", "empty-state": "/components/empty-state/index" }
+}

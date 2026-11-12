@@ -1,0 +1,6 @@
+<view class="page">
+  <text class="page-title">发起讨论</text><text class="page-subtitle">校园里的新鲜事、问题，都可以聊一聊。</text>
+  <view class="surface writing-surface"><textarea class="field-area post-input" placeholder="想和同学们说些什么？" maxlength="2000" value="{{content}}" bindinput="onInput" /><view class="input-footer"><text>帖子公开可见，请尊重他人隐私</text><text>{{content.length}} / 2000</text></view></view>
+  <button class="primary-button submit-button" loading="{{submitting}}" disabled="{{submitting}}" bindtap="submit" hover-class="button-pressed">发布帖子</button>
+  <text class="form-note">内容通过安全检查后公开。</text>
+</view>

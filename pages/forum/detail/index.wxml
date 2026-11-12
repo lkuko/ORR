@@ -1,0 +1,8 @@
+<view class="page" wx:if="{{post}}">
+  <view class="post-detail"><view class="post-author-row"><view class="avatar">{{post.authorInitial}}</view><view><text class="post-author">{{post.authorNickname}}</text><text class="post-time">{{post.createdLabel}}</text></view></view><text class="post-content">{{post.content}}</text><button class="text-button report-button" bindtap="report">举报帖子</button></view>
+  <view class="section-heading"><text>同学们的评论</text><text class="muted">{{comments.length}} 条</text></view>
+  <view wx:if="{{comments.length === 0}}" class="comment-empty">还没有评论，来说说你的想法。</view>
+  <view wx:for="{{comments}}" wx:key="id" class="comment-row"><view class="comment-person"><view class="avatar comment-avatar">{{item.authorInitial}}</view><view class="comment-main"><view class="comment-heading"><text class="comment-author">{{item.authorNickname}}</text><text class="comment-time">{{item.createdLabel}}</text></view><text class="comment-content">{{item.content}}</text><button class="text-button report-comment" data-id="{{item.id}}" bindtap="reportComment">举报评论</button></view></view></view>
+  <view class="comment-composer"><textarea class="field-area comment-input" placeholder="写下你的评论" maxlength="500" value="{{commentText}}" bindinput="onCommentInput" /><button class="primary-button" loading="{{submitting}}" disabled="{{submitting}}" bindtap="submitComment">发送</button></view>
+</view>
+<view wx:else class="page"><view wx:if="{{loading}}" class="loading-panel"><view class="loading-line short"></view><view class="loading-line"></view><text class="loading-label">正在读取帖子…</text></view><empty-state wx:else title="帖子暂时无法打开" description="{{error || '请稍后重试。'}}" button-text="重新加载" bind:action="load" /></view>

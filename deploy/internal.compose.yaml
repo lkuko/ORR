@@ -1,0 +1,101 @@
+name: campus-internal
+
+services:
+  db:
+    image: mysql:8.4
+    command: ['--innodb-buffer-pool-size=134217728', '--max-connections=30', '--performance-schema=OFF']
+    mem_limit: 768m
+    environment:
+      MYSQL_DATABASE: campus_internal
+      MYSQL_USER: campus_internal
+      MYSQL_PASSWORD_FILE: /run/secrets/db_password
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mysql_root_password
+    secrets:
+      - db_password
+      - mysql_root_password
+    volumes:
+      - mysql_data:/var/lib/mysql
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD-SHELL', 'MYSQL_PWD="$$(cat /run/secrets/db_password)" mysql --protocol=TCP -h 127.0.0.1 -u campus_internal -D campus_internal -e "SELECT 1" >/dev/null 2>&1']
+      interval: 10s
+      timeout: 5s
+      retries: 15
+      start_period: 60s
+    logging: &logging
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: '3'
+
+  api:
+    image: campus-internal-api:${APP_VERSION:?Set APP_VERSION}
+    mem_limit: 256m
+    build:
+      context: ../server
+      dockerfile: ../deploy/api.Dockerfile
+    env_file:
+      - ${SECRETS_DIR:?Set SECRETS_DIR}/server.env
+      - ${SECRETS_DIR:?Set SECRETS_DIR}/wechat.env
+    environment:
+      NODE_ENV: production
+      NODE_OPTIONS: --max-old-space-size=160
+      BIND_HOST: 0.0.0.0
+      PORT: '3000'
+      TRUST_PROXY_HOPS: '1'
+      API_BASE_PATH: /api/v1
+      WEB_ORIGIN: http://127.0.0.1:18080
+      ALLOW_LOOPBACK_HTTP: 'true'
+      WECHAT_LOGIN_MODE: wechat
+      CONTENT_CHECK_MODE: wechat
+      DB_HOST: db
+      DB_PORT: '3306'
+      DB_NAME: campus_internal
+      DB_USER: campus_internal
+      DB_PASSWORD_FILE: /run/secrets/db_password
+      DB_CONNECTION_LIMIT: '10'
+    secrets:
+      - db_password
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+    init: true
+    stop_grace_period: 30s
+    healthcheck:
+      test: ['CMD', 'node', '-e', 'fetch("http://127.0.0.1:3000/ready").then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))']
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    logging: *logging
+
+  admin:
+    image: campus-internal-admin:${APP_VERSION:?Set APP_VERSION}
+    mem_limit: 64m
+    build:
+      context: ../admin
+      dockerfile: ../deploy/admin.internal.Dockerfile
+    environment:
+      API_UPSTREAM: http://api:3000
+    ports:
+      - '127.0.0.1:18080:80'
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD-SHELL', 'wget -q -O - http://127.0.0.1/ready > /dev/null || exit 1']
+      interval: 15s
+      timeout: 8s
+      retries: 3
+    logging: *logging
+
+volumes:
+  mysql_data:
+
+secrets:
+  db_password:
+    file: ${SECRETS_DIR:?Set SECRETS_DIR}/db-password
+  mysql_root_password:
+    file: ${SECRETS_DIR:?Set SECRETS_DIR}/mysql-root-password

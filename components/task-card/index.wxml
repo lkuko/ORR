@@ -1,0 +1,10 @@
+<view class="task" bindtap="open" hover-class="pressed" role="button" aria-label="{{task.title}}，{{task.rewardLabel}}">
+  <view class="heading">
+    <view class="category category-{{task.category}}"><text class="category-mark">{{task.category === 'PACKAGE' ? '取' : task.category === 'FOOD' ? '餐' : task.category === 'ERRAND' ? '办' : '帮'}}</text><text>{{task.categoryLabel}}</text></view>
+    <view class="reward"><text>{{task.rewardLabel}}</text><text wx:if="{{task.hasReward}}" class="settlement">线下结算</text></view>
+  </view>
+  <text class="title">{{task.title}}</text>
+  <text class="description">{{task.description}}</text>
+  <view class="location"><view class="waypoint"></view><text class="area">{{task.publicArea}}</text></view>
+  <view class="footer"><text class="owner">{{task.ownerNickname}}</text><text class="time">{{task.createdLabel}}</text><text class="detail-link">查看详情</text></view>
+</view>

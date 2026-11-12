@@ -1,0 +1,4 @@
+.picker-mark { float: right; color: #66738a; font-size: 31rpx; line-height: 1; }
+.form-section { padding-top: 28rpx; padding-bottom: 30rpx; }
+.form-section-title { margin-bottom: 24rpx; }
+.submit-button { display: block; width: 100%; }

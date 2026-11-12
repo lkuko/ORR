@@ -1,0 +1,5 @@
+<view class="empty">
+  <view class="empty-symbol" aria-hidden="true"><view></view><view></view><view></view></view>
+  <text class="title">{{title}}</text><text wx:if="{{description}}" class="description">{{description}}</text>
+  <button wx:if="{{buttonText}}" bindtap="action" hover-class="pressed">{{buttonText}}</button>
+</view>

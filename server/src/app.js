@@ -1,0 +1,42 @@
+const express = require('express')
+const cors = require('cors')
+const helmet = require('helmet')
+const { rateLimit } = require('express-rate-limit')
+const { env } = require('./config/env')
+const authRouter = require('./modules/auth/router')
+const tasksRouter = require('./modules/tasks/router')
+const forumRouter = require('./modules/forum/router')
+const reportsRouter = require('./modules/reports/router')
+const adminRouter = require('./modules/admin/router')
+const { notFound, errorHandler } = require('./middleware/error-handler')
+const { requestLog } = require('./middleware/request-log')
+const { getPool } = require('./db/pool')
+const { asyncRoute } = require('./lib/errors')
+
+function createApp() {
+  const app = express()
+  app.disable('x-powered-by')
+  app.set('trust proxy', env.trustProxy)
+  app.use(requestLog)
+  app.use(helmet())
+  app.use(cors({ origin: env.webOrigin, credentials: false }))
+  app.use(express.json({ limit: '32kb' }))
+  app.use(rateLimit({ windowMs: 60_000, limit: 300, standardHeaders: 'draft-7', legacyHeaders: false, message: { error: { code: 'RATE_LIMIT', message: '操作过于频繁，请稍后重试' } } }))
+  app.use((req, res, next) => {
+    if (['POST', 'PATCH'].includes(req.method) && (!req.body || typeof req.body !== 'object' || Array.isArray(req.body))) return res.status(400).json({ error: { code: 'INVALID_BODY', message: '请求内容必须是 JSON 对象' } })
+    next()
+  })
+  app.get('/health', (req, res) => res.json({ status: 'ok' }))
+  app.get('/ready', asyncRoute(async (req, res) => { await getPool().query('SELECT 1'); res.json({ status: 'ready' }) }))
+  app.use(`${env.apiBasePath}/auth/admin-login`, rateLimit({ windowMs: 15 * 60_000, limit: 10, message: { error: { code: 'RATE_LIMIT', message: '登录尝试过多，请 15 分钟后重试' } } }))
+  app.use(`${env.apiBasePath}/auth`, authRouter)
+  app.use(`${env.apiBasePath}/tasks`, tasksRouter)
+  app.use(`${env.apiBasePath}/posts`, forumRouter)
+  app.use(`${env.apiBasePath}/reports`, reportsRouter)
+  app.use(`${env.apiBasePath}/admin`, adminRouter)
+  app.use(notFound)
+  app.use(errorHandler)
+  return app
+}
+
+module.exports = { createApp }

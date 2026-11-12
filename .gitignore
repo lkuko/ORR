@@ -1,0 +1,13 @@
+node_modules/
+server/node_modules/
+admin/node_modules/
+server/.env
+admin/.env.local
+dist/
+coverage/
+*.log
+.local/
+admin/.env
+project.private.config.json
+.env
+artifacts/

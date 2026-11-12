@@ -1,0 +1,9 @@
+.empty { padding: 58rpx 36rpx; text-align: center; background: #fff; border: 1rpx solid #e4e9f3; border-radius: 16rpx; }
+.empty-symbol { margin: 0 auto 26rpx; width: 68rpx; padding: 16rpx 12rpx; border: 3rpx solid #9aadd4; border-radius: 12rpx; transform: rotate(-6deg); }
+.empty-symbol view { height: 3rpx; margin: 8rpx 0; background: #9aadd4; }
+.empty-symbol view:last-child { width: 60%; }
+.title { display: block; color: #182744; font-size: 30rpx; font-weight: 600; }
+.description { display: block; margin-top: 14rpx; color: #66738a; font-size: 25rpx; line-height: 1.7; }
+button { display: inline-block; min-width: 210rpx; min-height: 88rpx; margin-top: 26rpx; border-radius: 14rpx; padding: 22rpx 32rpx; line-height: 1.5; background: #e9efff; color: #2854d9; font-size: 26rpx; }
+button::after { border: 0; }
+.pressed { opacity: .75; }
