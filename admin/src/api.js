@@ -1,29 +1,44 @@
-const apiBase = import.meta.env.VITE_API_BASE_URL || '/api/v1'
+import cloudbase from '@cloudbase/js-sdk'
+const env = import.meta.env.VITE_CLOUDBASE_ENV || 'orr-d0gvuc3liba01ebf1'
+const app = cloudbase.init({ env, region: 'ap-shanghai' })
+const auth = app.auth({ persistence: 'local' })
 
-async function request(path, options = {}) {
-  const token = localStorage.getItem('adminToken')
-  const response = await fetch(`${apiBase}${path}`, {
-    method: options.method || 'GET',
-    headers: {
-      'content-type': 'application/json',
-      ...(token ? { Authorization: `Bearer ${token}` } : {})
-    },
-    body: options.data ? JSON.stringify(options.data) : undefined
-  })
-  const data = await response.json().catch(() => ({}))
-  if (!response.ok) throw new Error(data.error?.message || '请求失败')
-  return data
+async function call(action, data = {}, write = false) {
+  const storageKey = 'orr:admin:pending:' + action
+  const fingerprint = JSON.stringify(data)
+  let pending
+  if (write) {
+    try { pending = JSON.parse(sessionStorage.getItem(storageKey) || 'null') } catch (_) {}
+    if (!pending || pending.fingerprint !== fingerprint) {
+      pending = { fingerprint, id: crypto.randomUUID() }
+      sessionStorage.setItem(storageKey, JSON.stringify(pending))
+    }
+  }
+  const response = await app.callFunction({ name: 'campus-api', data: { action, data, requestId: pending?.id || crypto.randomUUID() } })
+  const result = response.result
+  if (!result?.ok) {
+    const error = new Error(result?.error?.message || '服务暂时不可用')
+    error.code = result?.error?.code
+    if (write && error.code && !['INTERNAL_ERROR', 'BUSY'].includes(error.code)) sessionStorage.removeItem(storageKey)
+    throw error
+  }
+  if (write) sessionStorage.removeItem(storageKey)
+  return result.data
 }
-
 export const api = {
-  login: (username, password) => request('/auth/admin-login', { method: 'POST', data: { username, password } }),
-  reports: status => request(`/admin/reports?status=${status}`),
-  content: (type, id) => request(`/admin/content/${type}/${id}`),
-  resolveReport: (id, status, resolution) => request(`/admin/reports/${id}/resolve`, { method: 'POST', data: { status, resolution } }),
-  hide: (type, id, reason) => request(`/admin/content/${type}/${id}/hide`, { method: 'POST', data: { reason } }),
-  cancellations: () => request('/admin/cancellations'),
-  resolveCancellation: (id, cancelled, reason) => request(`/admin/tasks/${id}/cancellation`, { method: 'POST', data: { cancelled, reason } }),
-  users: query => request(`/admin/users?q=${encodeURIComponent(query || '')}`),
-  setUserStatus: (id, status, reason) => request(`/admin/users/${id}/status`, { method: 'PATCH', data: { status, reason } }),
-  actions: () => request('/admin/actions')
+  async login(username, password) {
+    await auth.signIn({ username, password })
+    try { return await call('admin.session') } catch (error) { await auth.signOut(); throw error }
+  },
+  async restore() { return await auth.getLoginState() ? call('admin.session') : null },
+  logout: () => auth.signOut(),
+  reports: status => call('admin.reports', { status }),
+  content: (type, id) => call('admin.content', { type, id: String(id) }),
+  resolveReport: (id, status, resolution) => call('admin.resolveReport', { id: String(id), status, resolution }, true),
+  hide: (type, id, reason) => call('admin.hide', { type, id: String(id), reason }, true),
+  cancellations: () => call('admin.cancellations'),
+  resolveCancellation: (id, cancelled, reason) => call('admin.resolveCancellation', { id: String(id), cancelled, reason }, true),
+  users: q => call('admin.users', { q }),
+  setUserStatus: (id, status, reason) => call('admin.setUserStatus', { id: String(id), status, reason }, true),
+  actions: () => call('admin.actions')
 }

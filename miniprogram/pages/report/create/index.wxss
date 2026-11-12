@@ -1,0 +1,6 @@
+.report-surface { margin-top: 28rpx; }
+.report-input { min-height: 300rpx; }
+.submit-button { display: block; width: 100%; }
+.report-receipt { padding: 48rpx 0; }
+.receipt-mark { display: flex; align-items: center; justify-content: center; width: 88rpx; height: 88rpx; margin-bottom: 28rpx; border-radius: 50%; background: #e6f1ea; color: #34715b; font-size: 44rpx; }
+.report-receipt .receipt-back { display: flex; width: 100%; margin-top: 16rpx; }

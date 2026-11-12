@@ -1,0 +1,14 @@
+<view class="page" wx:if="{{!submitted}}">
+  <text class="page-title">提交举报</text><text class="page-subtitle">请说明具体问题，管理员会查看并记录处理结果。</text>
+  <view class="surface report-surface"><text class="field-label">举报原因</text><textarea class="field-area report-input" placeholder="描述你遇到的问题" maxlength="500" value="{{reason}}" bindinput="onInput" /><text class="field-hint">请勿填写手机号或其他无关的个人信息。</text></view>
+  <button class="primary-button submit-button" loading="{{submitting}}" disabled="{{submitting}}" bindtap="submit">提交举报</button>
+</view>
+<view class="page" wx:else>
+  <view class="report-receipt">
+    <view class="receipt-mark" aria-hidden="true">✓</view>
+    <text class="page-title">举报已提交</text>
+    <text class="page-subtitle">管理员会核实这条举报。处理进度和结果可在“我的 → 我的举报”中查看。</text>
+    <button class="primary-button submit-button" bindtap="openRecords">查看举报记录</button>
+    <button class="text-button receipt-back" bindtap="goBack">返回原页面</button>
+  </view>
+</view>

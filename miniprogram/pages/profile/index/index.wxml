@@ -1,0 +1,12 @@
+<view class="page profile-page">
+  <text class="page-title">我的校园生活</text><text class="page-subtitle">有人帮你，也能顺路帮帮别人。</text>
+  <view wx:if="{{user}}" class="profile-card"><view class="profile-top"><view class="profile-initial">{{user.initial}}</view><view class="profile-copy"><text class="profile-name">{{user.nickname}}</text><text class="profile-note">校园互助用户</text></view></view><button class="edit-profile" bindtap="editNickname" hover-class="button-pressed">修改昵称</button></view>
+  <empty-state wx:elif="{{error}}" title="暂时无法登录" description="{{error}}" button-text="重新登录" bind:action="onShow" />
+  <view wx:else class="loading-panel profile-loading"><text class="loading-label">正在读取你的信息…</text></view>
+  <view class="section-heading"><text>我的任务</text></view>
+  <view class="quick-orders"><button class="quick-order" data-role="owner" bindtap="openOrders"><view class="quick-icon">发</view><text class="quick-title">我发布的</text><text class="quick-note">查看需求进度</text></button><button class="quick-order" data-role="helper" bindtap="openOrders"><view class="quick-icon helper-icon">接</view><text class="quick-title">我接单的</text><text class="quick-note">跟进接下的任务</text></button></view>
+  <view class="section-heading"><text>安心互助</text></view>
+  <button class="report-entry" bindtap="openReports"><view class="report-entry-copy"><text class="report-entry-title">我的举报</text><text class="report-entry-note">查看提交记录与处理结果</text></view><text class="entry-chevron" aria-hidden="true">›</text></button>
+  <view class="surface safety-panel"><view class="safety-row"><text class="safety-title">地点只给需要的人看</text><text class="safety-copy">精确地点在接单后仅对订单双方展示。</text></view><view class="safety-row"><text class="safety-title">报酬由双方线下结算</text><text class="safety-copy">小程序不代收费用，请先沟通再行动。</text></view><view class="safety-row"><text class="safety-title">遇到问题，留下记录</text><text class="safety-copy">使用订单留言沟通，有分歧可申请取消或举报。</text></view></view>
+  <text wx:if="{{user && error}}" class="error-text">{{error}}</text>
+</view>

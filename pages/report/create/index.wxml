@@ -1,5 +1,0 @@
-<view class="page">
-  <text class="page-title">提交举报</text><text class="page-subtitle">请说明具体问题，管理员会查看并记录处理结果。</text>
-  <view class="surface report-surface"><text class="field-label">举报原因</text><textarea class="field-area report-input" placeholder="描述你遇到的问题" maxlength="500" value="{{reason}}" bindinput="onInput" /><text class="field-hint">请勿填写手机号或其他无关的个人信息。</text></view>
-  <button class="primary-button submit-button" loading="{{submitting}}" disabled="{{submitting}}" bindtap="submit">提交举报</button>
-</view>

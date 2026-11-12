@@ -1,0 +1,18 @@
+{
+  "name": "orr-cloudbase",
+  "version": "2.0.0",
+  "private": true,
+  "scripts": {
+    "test": "node --test tests/unit/*.test.js tests/integration/*.test.js",
+    "check": "node scripts/check-project.cjs",
+    "build:admin": "npm --prefix admin run build",
+    "verify": "npm run check && npm test && npm run build:admin"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "esbuild": "0.25.12",
+    "miniprogram-automator": "^0.13.0"
+  }
+}
