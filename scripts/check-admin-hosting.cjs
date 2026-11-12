@@ -3,10 +3,12 @@ const path = require('node:path')
 const { createHash } = require('node:crypto')
 
 const root = path.resolve(__dirname, '../admin/dist')
-const entryUrl = new URL(process.argv[2] || 'https://orr-d0gvuc3liba01ebf1-1530627261.tcloudbaseapp.com/orr-admin/index.html')
 const sha256 = value => createHash('sha256').update(value).digest('hex')
 
 async function main() {
+  const address = process.argv[2] || process.env.ORR_ADMIN_URL
+  if (!address || address.includes('YOUR_')) throw new Error('请传入实际管理台 URL：node scripts/check-admin-hosting.cjs <URL>，或设置 ORR_ADMIN_URL')
+  const entryUrl = new URL(address)
   if (!['https:', 'http:'].includes(entryUrl.protocol)) throw new Error('管理台地址必须使用 HTTP 或 HTTPS')
   const entry = await fs.readFile(path.join(root, 'index.html'))
   const assets = [...entry.toString('utf8').matchAll(/(?:src|href)="\.\/(assets\/[^"?#]+)"/g)].map(match => match[1])

@@ -1,5 +1,5 @@
 import cloudbase from '@cloudbase/js-sdk'
-const env = import.meta.env.VITE_CLOUDBASE_ENV || 'orr-d0gvuc3liba01ebf1'
+const env = import.meta.env.VITE_CLOUDBASE_ENV
 const app = cloudbase.init({ env, region: 'ap-shanghai' })
 const auth = app.auth({ persistence: 'local' })
 

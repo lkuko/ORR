@@ -1,5 +1,5 @@
 {
-  "environment": "orr-d0gvuc3liba01ebf1",
+  "environment": "YOUR_CLOUDBASE_ENV_ID",
   "collections": [
     {
       "name": "users",

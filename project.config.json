@@ -44,7 +44,7 @@
     "swc": false,
     "disableSWC": true
   },
-  "appid": "wxe8c489bc30b7340f",
+  "appid": "YOUR_WECHAT_APPID",
   "projectname": "ORR-cloudbase",
   "libVersion": "3.18.0",
   "condition": {},

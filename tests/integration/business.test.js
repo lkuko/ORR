@@ -1,14 +1,15 @@
 const { test } = require('node:test')
 const assert = require('node:assert/strict')
-const { createHandler, actorKey, ALLOWED_APP_ID } = require('../../cloudfunctions/campus-api/app')
+const { createHandler, actorKey } = require('../../cloudfunctions/campus-api/app')
 const { createMemoryStore } = require('../helpers/memory-store')
 const { AppError } = require('../../cloudfunctions/campus-api/lib/errors')
 const { createMiniProgram } = require('../helpers/miniprogram')
 const input = { title: '取一本书', description: '请帮忙带到东区', category: 'ERRAND', rewardAmount: '0.29', publicArea: '东区', exactLocation: '一栋 301 室' }
+const TEST_APP_ID = 'wx' + '0'.repeat(16)
 async function fixture(checkText = async () => {}) {
   const store = createMemoryStore()
-  const handle = createHandler({ store, checkText })
-  const identities = { owner: { appid: ALLOWED_APP_ID, openid: 'owner' }, helper: { appid: ALLOWED_APP_ID, openid: 'helper' }, stranger: { appid: ALLOWED_APP_ID, openid: 'stranger' }, admin: { uid: 'admin-uid' } }
+  const handle = createHandler({ store, checkText, allowedAppId: TEST_APP_ID })
+  const identities = { owner: { appid: TEST_APP_ID, openid: 'owner' }, helper: { appid: TEST_APP_ID, openid: 'helper' }, stranger: { appid: TEST_APP_ID, openid: 'stranger' }, admin: { uid: 'admin-uid' } }
   const users = {}
   let sequence = 0
   const call = (who, action, data = {}, requestId = 'request_' + (++sequence)) => handle({ action, data, requestId }, identities[who])
@@ -43,7 +44,7 @@ test('public lists and strangers cannot obtain precise location or order message
 
 test('twelve concurrent accept attempts commit one helper and one event', async () => {
   const f = await fixture(), task = await f.create()
-  const identities = Array.from({ length: 12 }, (_, i) => ({ appid: ALLOWED_APP_ID, openid: 'racer' + i }))
+  const identities = Array.from({ length: 12 }, (_, i) => ({ appid: TEST_APP_ID, openid: 'racer' + i }))
   await Promise.all(identities.map(identity => f.handle({ action: 'users.login' }, identity)))
   const results = await Promise.all(identities.map((identity, i) => f.handle({ action: 'tasks.accept', data: { id: task.id }, requestId: 'accept_' + i + '_race' }, identity)))
   assert.equal(results.filter(x => x.ok).length, 1)

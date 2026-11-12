@@ -147,7 +147,7 @@ ORR/
 └── package.json                  本地验证命令
 ```
 
-目录职责和新增模块约定见 [工程结构](docs/project-structure.md)。`.local/` 仅保存本机凭据、构建中间产物和验收证据，不提交 Git。
+目录职责和新增模块约定见 [工程结构](docs/project-structure.md)。`.local/` 保存本机凭据、构建中间产物和验收证据；`.agents/` 是可选的本地 AI 开发技能目录。两者都不提交 Git，也不属于产品运行依赖。
 
 ## 快速开始
 
@@ -173,26 +173,34 @@ npm --prefix cloudfunctions/campus-api ci
 
 ### 3. 配置并运行小程序
 
-1. 用微信开发者工具导入**工程根目录**，不要只导入 `miniprogram/`。
-2. 核对 `project.config.json` 中的 AppID，以及 `miniprogram/utils/config.js` 的环境映射。
-3. 已有环境的维护者可直接使用当前测试配置；部署到自己的环境时，还须建立集合、索引和管理员角色，并部署业务云函数，不能只修改 env ID。
-4. 编译后进入小程序。开发版与体验版使用测试环境；正式环境暂未绑定。
+仓库只保留 `YOUR_WECHAT_APPID`、`YOUR_CLOUDBASE_ENV_ID` 等占位符，不分发实际环境配置。首次使用时复制模板；已有本地配置不要覆盖：
+
+```powershell
+Copy-Item project.private.config.example.json project.private.config.json
+Copy-Item miniprogram/utils/environments.example.js miniprogram/utils/environments.local.js
+Copy-Item admin/.env.example admin/.env.local
+```
+
+1. 在以上三个本地文件中填写自己的 AppID 和 env ID。这些文件已被 Git 忽略。
+2. 用微信开发者工具导入**工程根目录**，不要只导入 `miniprogram/`；私有配置中的 AppID 覆盖共享配置的占位符。
+3. 在目标环境建立集合、索引和管理员角色，并部署业务云函数，不能只修改 env ID。
+4. 编译后进入小程序。分别设置开发版、体验版环境；正式环境未准备好时保持 `release` 为空。
 
 | 配置项 | 位置 | 说明 |
 | --- | --- | --- |
-| 小程序 AppID | `project.config.json` | 需与目标云环境绑定 |
-| 小程序环境 | `miniprogram/utils/config.js` | 分别配置 `develop`、`trial`、`release` |
+| 小程序 AppID | `project.private.config.json` | 本地覆盖共享占位符，需与目标云环境绑定 |
+| 小程序环境 | `miniprogram/utils/environments.local.js` | 分别配置 `develop`、`trial`、`release` |
 | 管理台环境 | `admin/.env.local` | `VITE_CLOUDBASE_ENV`，构建时读取 |
+| 云函数 AppID 绑定 | `project.private.config.json` 或 `WECHAT_APP_ID` 环境变量 | 打包时注入，环境变量优先；未配置时拒绝构建 |
 | 集合与索引 | `database/collections.json` | 是本地声明，需在目标环境实际建立 |
 | 云函数权限 | `cloudfunctions/campus-api/config.json` | 包含内容安全接口权限 |
 
-当前测试环境为 `orr-d0gvuc3liba01ebf1`。env ID 是环境标识，不是密码；管理员凭据、SecretKey、AppSecret 不应写入 README 或前端源码。
+示例文件、部署命令和验收文档中的标识都已替换为占位符。实际 AppID、env ID、站点地址和管理员凭据只在本机或云端配置；不要把 `.local/`、本地配置或构建产物打包分享。
 
 ### 4. 运行管理台
 
 ```powershell
-# 首次配置；已存在自己的配置时保留现有文件
-Copy-Item admin/.env.example admin/.env.local
+# 已在上一步填写 admin/.env.local
 npm --prefix admin run dev
 ```
 
@@ -218,9 +226,9 @@ npm run verify
 | 线上管理台 | 运行 `npm --prefix admin run build`，把 `admin/dist/` 发布到静态托管 `orr-admin/` | 核对线上资源版本、登录和模块读取 |
 | 小程序 | 微信开发者工具编译、预览或上传 | 真机关闭调试验收；正式发布另行审核 |
 
-现有测试管理台：[打开云端管理台](https://orr-d0gvuc3liba01ebf1-1530627261.tcloudbaseapp.com/orr-admin/index.html)。测试域名可能先显示腾讯云访问提示。
+管理台地址格式：`https://YOUR_CLOUDBASE_HOST/orr-admin/index.html`，请在 CloudBase 静态托管控制台查看自己的实际域名。测试域名可能先显示腾讯云访问提示。
 
-2026-11-12 已将新版管理台同步到该地址，并核对线上 HTML、JS、CSS 与本地构建一致；管理员登录和四个管理模块读取通过。
+2026-11-12 已将新版管理台同步到当时的测试环境，并核对线上 HTML、JS、CSS 与本地构建一致；管理员登录和四个管理模块读取通过。实际地址不随仓库分发。
 
 静态托管发布范围只应覆盖 `orr-admin/`，保留平台认证文件和其他站点内容。云函数必须使用打包后的目录，不直接把仓库源码目录当作已验证的部署产物。
 
@@ -232,7 +240,7 @@ npm run verify
 
 | 层级 | 验证范围与结果 |
 | --- | --- |
-| 本地自动化 | 36 项测试通过；10 页注册检查和管理台构建通过 |
+| 本地自动化 | 38 项测试通过；10 页注册检查和管理台构建通过 |
 | 权限与隐私 | 可信身份、精确地点裁剪、本人举报隔离、数据库直读写拒绝 |
 | 事务与幂等 | 并发接单、重复留言、网络丢失响应后重试、事务回滚 |
 | 真实双账号 | 关闭调试完成订单、取消协商、争议处理、论坛评论与举报闭环 |
@@ -250,7 +258,7 @@ npm run verify
 | `npm test` | 本地单元测试与业务集成测试 |
 | `npm run build:admin` | 管理台生产构建 |
 | `npm run verify` | 执行以上完整验证 |
-| `node scripts/check-admin-hosting.cjs` | 比较线上管理台与本地构建文件，发现漏发布或旧缓存 |
+| `node scripts/check-admin-hosting.cjs <实际管理台URL>` | 比较线上管理台与本地构建文件，也可用 `ORR_ADMIN_URL` 环境变量传入地址 |
 | `node scripts/build-cloud.cjs` | 打包云函数部署目录 |
 | `node scripts/cloud-smoke.cjs` | 连接开发者工具做真实云端冒烟，会创建并取消测试任务 |
 | `node scripts/check-project.cjs --release` | 检查正式发布配置，未绑定正式环境时拒绝通过 |

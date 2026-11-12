@@ -4,6 +4,9 @@ const vm = require('node:vm')
 const assert = require('node:assert/strict')
 const root = path.resolve(__dirname, '..')
 const read = file => fs.readFileSync(path.join(root, file), 'utf8')
+const environmentsPath = path.join(root, 'miniprogram/utils/environments.local.js')
+assert.ok(fs.existsSync(environmentsPath), 'Copy environments.example.js to environments.local.js and configure your environment IDs first')
+const environments = require(environmentsPath)
 let scripts = 0, jsonFiles = 0
 function inspect(folder) {
   for (const entry of fs.readdirSync(path.join(root, folder), { withFileTypes: true })) {
@@ -23,6 +26,9 @@ function inspect(folder) {
 }
 for (const dir of ['miniprogram', 'cloudfunctions/campus-api']) inspect(dir)
 const project = JSON.parse(read('project.config.json'))
+const privatePath = path.join(root, 'project.private.config.json')
+const local = fs.existsSync(privatePath) ? JSON.parse(read('project.private.config.json')) : {}
+assert.match(local.appid || project.appid || '', /^wx[0-9a-f]{16}$/, 'Configure your AppID in project.private.config.json first')
 const app = JSON.parse(read('miniprogram/app.json'))
 assert.equal(project.miniprogramRoot, 'miniprogram/')
 assert.equal(project.cloudfunctionRoot, 'cloudfunctions/')
@@ -38,9 +44,13 @@ for (const item of app.tabBar.list) for (const key of ['iconPath', 'selectedIcon
 }
 for (const envVersion of ['develop', 'trial', 'release', 'unknown']) {
   const module = { exports: {} }
-  vm.runInNewContext(read('miniprogram/utils/config.js'), { module, wx: { getAccountInfoSync: () => ({ miniProgram: { envVersion } }) } })
+  vm.runInNewContext(read('miniprogram/utils/config.js'), {
+    module, require(dependency) { assert.equal(dependency, './environments.local.js'); return environments },
+    wx: { getAccountInfoSync: () => ({ miniProgram: { envVersion } }) }
+  })
   assert.equal('useDemoData' in module.exports, false)
   assert.equal('useDemoLogin' in module.exports, false)
+  if (['develop', 'trial'].includes(envVersion)) assert.ok(module.exports.cloudEnv, envVersion + ': replace the environment placeholder in environments.local.js')
   if (process.argv.includes('--release') && envVersion === 'release') assert.ok(module.exports.cloudEnv, 'Production environment is not configured')
 }
 const schema = JSON.parse(read('database/collections.json'))

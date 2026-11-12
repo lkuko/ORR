@@ -1,7 +1,7 @@
 const fs = require('node:fs')
 const path = require('node:path')
 const vm = require('node:vm')
-function createMiniProgram({ envVersion = 'develop', wxOverrides = {}, storage = new Map() } = {}) {
+function createMiniProgram({ envVersion = 'develop', environments = { develop: 'test-cloud-env', trial: 'test-cloud-env', release: '' }, wxOverrides = {}, storage = new Map() } = {}) {
   const root = path.resolve(__dirname, '../../miniprogram')
   const cache = new Map(), navigation = []
   let app, lastPage
@@ -36,6 +36,7 @@ function createMiniProgram({ envVersion = 'develop', wxOverrides = {}, storage =
     let file = path.resolve(path.dirname(parent), relative)
     if (!path.extname(file)) file += '.js'
     if (!file.startsWith(root + path.sep)) throw new Error('Test module must be inside miniprogram')
+    if (file === path.join(root, 'utils/environments.local.js')) return environments
     if (cache.has(file)) return cache.get(file).exports
     const module = { exports: {} }
     cache.set(file, module)

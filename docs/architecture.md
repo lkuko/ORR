@@ -14,7 +14,7 @@
 
 ## 数据与身份
 
-- 微信身份只来自 cloud.getWXContext；绑定 AppID，不接受客户端 userId/openid/role。
+- 微信身份只来自 cloud.getWXContext；AppID 由本地打包配置或云函数环境变量绑定，不接受客户端 userId/openid/role，也不会将请求中的 AppID 作为服务端配置。
 - 用户 ID = SHA-256(wechat、AppID、OpenID)。业务 ID 是字符串，避免数字比较和 SQL 自增假设。
 - admin_users 文档 ID = SHA-256(admin、CloudBase uid)。用户的微信身份不自动成为网页管理员身份。
 - 精确地点、取消原因和留言由云函数验证权限后返回。任务大厅始终只返回大致区域；参与者详情可看精确地点。

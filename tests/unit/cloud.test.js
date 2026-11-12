@@ -5,6 +5,30 @@ const { money, amount } = require('../../cloudfunctions/campus-api/lib/validatio
 const { createContentGuard } = require('../../cloudfunctions/campus-api/lib/content-guard')
 const { createStore, isConflict } = require('../../cloudfunctions/campus-api/lib/store')
 const { AppError } = require('../../cloudfunctions/campus-api/lib/errors')
+const { createHandler } = require('../../cloudfunctions/campus-api/app')
+
+test('placeholder cloud environments never initialize or call the cloud SDK', async () => {
+  for (const value of ['', 'YOUR_CLOUDBASE_ENV_ID', ' YOUR_CLOUDBASE_ENV_ID ', null]) {
+    let calls = 0
+    const client = createMiniProgram({ environments: { develop: value }, wxOverrides: {
+      cloud: { init() { calls++ }, async callFunction() { calls++; throw new Error('Must not call cloud') } }
+    } })
+    await assert.rejects(client.app.ensureLogin(), /云环境/)
+    assert.equal(calls, 0)
+  }
+})
+
+test('missing or placeholder AppID cannot authorize login or health requests', async () => {
+  for (const allowedAppId of ['', 'YOUR_WECHAT_APPID', 'invalid']) {
+    let reads = 0
+    const handle = createHandler({ allowedAppId, store: { async get() { reads++ } }, checkText: async () => {} })
+    for (const action of ['users.login', 'system.health']) {
+      const response = await handle({ action }, { appid: allowedAppId, openid: 'test-user' })
+      assert.equal(response.error.code, 'CONFIGURATION_ERROR')
+    }
+    assert.equal(reads, 0)
+  }
+})
 test('build configuration has no demo identity and unknown builds fail closed', async () => {
   for (const envVersion of ['develop', 'trial', 'release', 'unknown']) {
     const client = createMiniProgram({ envVersion })

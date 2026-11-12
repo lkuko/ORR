@@ -5,13 +5,13 @@ const routes = {
   ...require('./modules/users'), ...require('./modules/tasks'), ...require('./modules/messages'),
   ...require('./modules/forum'), ...require('./modules/reports'), ...require('./modules/admin')
 }
-const ALLOWED_APP_ID = 'wxe8c489bc30b7340f'
-function userId(identity) {
-  check(identity.openid && identity.appid === ALLOWED_APP_ID, 'UNAUTHENTICATED', '请通过微信小程序登录')
+function userId(identity, allowedAppId) {
+  check(typeof allowedAppId === 'string' && /^wx[0-9a-f]{16}$/.test(allowedAppId), 'CONFIGURATION_ERROR', '服务尚未配置小程序 AppID')
+  check(identity.openid && identity.appid === allowedAppId, 'UNAUTHENTICATED', '请通过微信小程序登录')
   return hash('wechat', identity.appid, identity.openid)
 }
-function actorKey(identity, admin) {
-  if (!admin) return userId(identity)
+function actorKey(identity, admin, allowedAppId) {
+  if (!admin) return userId(identity, allowedAppId)
   check(identity.uid && !identity.anonymous, 'ADMIN_REQUIRED', '请先登录管理员账号')
   return hash('admin', identity.uid)
 }
@@ -30,7 +30,7 @@ function timedStore(store, metrics) {
   result.transact = work => store.transact(tx => work(timedStore(tx, metrics)))
   return result
 }
-function createHandler({ store: originalStore, checkText, clock = () => new Date(), logger = () => {} }) {
+function createHandler({ store: originalStore, checkText, allowedAppId = process.env.WECHAT_APP_ID, clock = () => new Date(), logger = () => {} }) {
   let coldStart = true
   return async function handle(event, identity) {
     const started = Date.now(), cold = coldStart
@@ -46,7 +46,7 @@ function createHandler({ store: originalStore, checkText, clock = () => new Date
       check(typeof data === 'object' && !Array.isArray(data) && JSON.stringify(data).length <= 16000, 'INVALID_REQUEST', '请求内容过长或格式错误')
       let result
       if (action === 'system.health') {
-        const id = userId(identity)
+        const id = userId(identity, allowedAppId)
         try {
           await store.get('users', id)
           result = { version: '2.0.0', runtime: process.version, userId: id, databaseReady: true }
@@ -54,7 +54,7 @@ function createHandler({ store: originalStore, checkText, clock = () => new Date
           result = { version: '2.0.0', runtime: process.version, userId: id, databaseReady: false, databaseCode: error.errCode || error.code || 'UNKNOWN' }
         }
       } else if (action === 'users.login') {
-        const id = userId(identity)
+        const id = userId(identity, allowedAppId)
         result = await store.transact(async tx => {
           let user = await tx.get('users', id)
           if (!user) {
@@ -68,7 +68,7 @@ function createHandler({ store: originalStore, checkText, clock = () => new Date
       } else {
         check(Object.hasOwn(routes, action), 'INVALID_ACTION', '请求操作无效')
         const route = routes[action]
-        const id = actorKey(identity, route.admin)
+        const id = actorKey(identity, route.admin, allowedAppId)
         const currentActor = await actor(store, id, route.admin)
         const ctx = { store, actor: currentActor, admin: !!route.admin, now: clock().toISOString() }
         if (!route.write) result = await route.run(ctx, data)
@@ -115,4 +115,4 @@ function createHandler({ store: originalStore, checkText, clock = () => new Date
     }
   }
 }
-module.exports = { createHandler, userId, actorKey, ALLOWED_APP_ID }
+module.exports = { createHandler, userId, actorKey }

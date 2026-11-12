@@ -9,7 +9,7 @@ ORR2.0/
 │   ├── pages/                       10 个业务页面：跑腿、订单、论坛、我的、举报及举报记录
 │   ├── components/                  任务卡片、状态标识、空状态
 │   ├── services/                    页面调用的云函数适配层
-│   ├── utils/                       环境映射、校验、展示格式
+│   ├── utils/                       环境模板与本地映射、校验、展示格式
 │   └── assets/tabbar/               底部导航图标
 ├── cloudfunctions/campus-api/       唯一业务云函数部署单元
 │   ├── index.js                     云端入口，读取可信身份
@@ -25,12 +25,15 @@ ORR2.0/
 ├── scripts/                         项目检查、云函数打包、真实云冒烟
 ├── tests/                           本地业务、小程序及管理台回归测试
 ├── docs/                            架构、部署、验收和前端设计
-├── project.config.json             微信开发者工具项目配置
+├── project.config.json             共享项目配置，AppID 使用占位符
+├── project.private.config.example.json  本地 AppID 配置模板
 └── package.json                    本地验证入口
 ```
 
 页面只能通过 `miniprogram/services/` 调用 `campus-api`。云函数的 `modules/` 放业务动作，`lib/` 放跨模块的存储、校验、内容安全和响应裁剪。所有数据库集合对客户端直读写关闭；管理网页也调用云函数，管理员角色由云端根据可信 uid 核对。
 
-`scripts/build-cloud.cjs` 将模块化源码打包到被 Git 忽略的 `.local/deploy/campus-api/`，这个目录才是部署输入。`database/collections.json` 是集合和索引的声明，云端实际状态还须按 `docs/cloudbase-setup.md` 核验。`.local/` 保存一次性运维程序和本地验收结果，不进入版本控制。
+`scripts/build-cloud.cjs` 将模块化源码打包到被 Git 忽略的 `.local/deploy/campus-api/`，并从本地私有配置或 `WECHAT_APP_ID` 环境变量注入 AppID；这个目录才是部署输入。`database/collections.json` 是集合和索引的声明，环境 ID 使用占位符，云端实际状态还须按 `docs/cloudbase-setup.md` 核验。
+
+`.local/` 保存一次性运维程序和本地验收结果。`.agents/` 是可选的 AI 开发工具目录。它们与 `project.private.config.json`、`miniprogram/utils/environments.local.js`、`admin/.env.local` 一起被 Git 忽略；新电脑按 README 从模板创建本地配置。
 
 新功能按运行端放到对应目录；新增业务动作优先进入现有 `modules/` 文件。只有出现独立的部署、权限或扩缩容需求时才拆出新的云函数。
