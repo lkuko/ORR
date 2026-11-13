@@ -1,0 +1,6 @@
+const cloud = require('wx-server-sdk')
+const { createStore } = require('../campus-api/lib/store')
+const { createCallback } = require('./handler')
+cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV, throwOnNotFound: false })
+const callback = createCallback({ store: createStore(cloud.database()), allowedAppId: process.env.WECHAT_APP_ID })
+exports.main = event => callback(event || {}, cloud.getWXContext().SOURCE)

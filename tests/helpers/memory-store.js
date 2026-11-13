@@ -11,7 +11,19 @@ function createMemoryStore() {
       async list(collection, filter = {}, order = 'createdAt', direction = 'desc', limit = 100) {
         if (transactional) throw new Error('Queries are forbidden inside CloudBase transactions')
         return [...docs.entries()].filter(([key]) => key.startsWith(collection + '/')).map(([, value]) => structuredClone(value))
-          .filter(doc => Object.entries(filter).every(([k, v]) => v && typeof v === 'object' && '$in' in v ? v.$in.includes(doc[k]) : doc[k] === v))
+          .filter(doc => Object.entries(filter).every(([k, v]) => {
+            if (!v || typeof v !== 'object') return doc[k] === v
+            return Object.entries(v).every(([op, value]) => {
+              if (op === '$in') return value.includes(doc[k])
+              if (op === '$regex') return new RegExp(value, 'i').test(doc[k] || '')
+              if (op === '$lt') return doc[k] < value
+              if (op === '$lte') return doc[k] <= value
+              if (op === '$gt') return doc[k] > value
+              if (op === '$gte') return doc[k] >= value
+              if (op === '$ne') return doc[k] !== value
+              throw new Error('Unsupported query operator ' + op)
+            })
+          }))
           .sort((a, b) => (String(a[order]).localeCompare(String(b[order]))) * (direction === 'desc' ? -1 : 1)).slice(0, limit)
       },
       async transact(work) {

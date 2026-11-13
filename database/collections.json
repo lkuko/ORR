@@ -203,7 +203,16 @@
         },
         {
           "name": "reporter_history",
-          "fields": [["reporterId", 1], ["createdAt", -1]]
+          "fields": [
+            [
+              "reporterId",
+              1
+            ],
+            [
+              "createdAt",
+              -1
+            ]
+          ]
         }
       ]
     },
@@ -222,6 +231,521 @@
         "write": false
       },
       "indexes": []
+    },
+    {
+      "name": "products",
+      "rules": {
+        "read": false,
+        "write": false
+      },
+      "indexes": [
+        {
+          "name": "public_rankKey",
+          "fields": [
+            [
+              "status",
+              1
+            ],
+            [
+              "visibility",
+              1
+            ],
+            [
+              "rankKey",
+              -1
+            ],
+            [
+              "createdAt",
+              -1
+            ]
+          ]
+        },
+        {
+          "name": "category_rankKey",
+          "fields": [
+            [
+              "status",
+              1
+            ],
+            [
+              "visibility",
+              1
+            ],
+            [
+              "category",
+              1
+            ],
+            [
+              "rankKey",
+              -1
+            ],
+            [
+              "createdAt",
+              -1
+            ]
+          ]
+        },
+        {
+          "name": "public_newestKey",
+          "fields": [
+            [
+              "status",
+              1
+            ],
+            [
+              "visibility",
+              1
+            ],
+            [
+              "newestKey",
+              -1
+            ],
+            [
+              "createdAt",
+              -1
+            ]
+          ]
+        },
+        {
+          "name": "category_newestKey",
+          "fields": [
+            [
+              "status",
+              1
+            ],
+            [
+              "visibility",
+              1
+            ],
+            [
+              "category",
+              1
+            ],
+            [
+              "newestKey",
+              -1
+            ],
+            [
+              "createdAt",
+              -1
+            ]
+          ]
+        },
+        {
+          "name": "seller_products",
+          "fields": [
+            [
+              "sellerId",
+              1
+            ],
+            [
+              "newestKey",
+              -1
+            ],
+            [
+              "createdAt",
+              1
+            ]
+          ]
+        },
+        {
+          "name": "seller_status",
+          "fields": [
+            [
+              "sellerId",
+              1
+            ],
+            [
+              "status",
+              1
+            ],
+            [
+              "newestKey",
+              -1
+            ],
+            [
+              "createdAt",
+              1
+            ]
+          ]
+        },
+        {
+          "name": "admin_products",
+          "fields": [
+            [
+              "newestKey",
+              -1
+            ],
+            [
+              "createdAt",
+              1
+            ]
+          ]
+        },
+        {
+          "name": "admin_products_status",
+          "fields": [
+            [
+              "status",
+              1
+            ],
+            [
+              "newestKey",
+              -1
+            ],
+            [
+              "createdAt",
+              1
+            ]
+          ]
+        },
+        {
+          "name": "admin_products_visibility",
+          "fields": [
+            [
+              "visibility",
+              1
+            ],
+            [
+              "newestKey",
+              -1
+            ],
+            [
+              "createdAt",
+              1
+            ]
+          ]
+        },
+        {
+          "name": "admin_products_visibility_status",
+          "fields": [
+            [
+              "visibility",
+              1
+            ],
+            [
+              "status",
+              1
+            ],
+            [
+              "newestKey",
+              -1
+            ],
+            [
+              "createdAt",
+              1
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "name": "favorites",
+      "rules": {
+        "read": false,
+        "write": false
+      },
+      "indexes": [
+        {
+          "name": "my_favorites",
+          "fields": [
+            [
+              "userId",
+              1
+            ],
+            [
+              "active",
+              1
+            ],
+            [
+              "newestKey",
+              -1
+            ],
+            [
+              "createdAt",
+              1
+            ]
+          ]
+        },
+        {
+          "name": "favorites_product_lookup",
+          "fields": [
+            [
+              "userId",
+              1
+            ],
+            [
+              "active",
+              1
+            ],
+            [
+              "productId",
+              1
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "name": "product_orders",
+      "rules": {
+        "read": false,
+        "write": false
+      },
+      "indexes": [
+        {
+          "name": "sellerId_orders",
+          "fields": [
+            [
+              "sellerId",
+              1
+            ],
+            [
+              "newestKey",
+              -1
+            ],
+            [
+              "createdAt",
+              1
+            ]
+          ]
+        },
+        {
+          "name": "sellerId_status",
+          "fields": [
+            [
+              "sellerId",
+              1
+            ],
+            [
+              "status",
+              1
+            ],
+            [
+              "newestKey",
+              -1
+            ],
+            [
+              "createdAt",
+              1
+            ]
+          ]
+        },
+        {
+          "name": "buyerId_orders",
+          "fields": [
+            [
+              "buyerId",
+              1
+            ],
+            [
+              "newestKey",
+              -1
+            ],
+            [
+              "createdAt",
+              1
+            ]
+          ]
+        },
+        {
+          "name": "buyerId_status",
+          "fields": [
+            [
+              "buyerId",
+              1
+            ],
+            [
+              "status",
+              1
+            ],
+            [
+              "newestKey",
+              -1
+            ],
+            [
+              "createdAt",
+              1
+            ]
+          ]
+        },
+        {
+          "name": "buyer_trash_expiry",
+          "fields": [
+            [
+              "buyerId",
+              1
+            ],
+            [
+              "buyerArchived",
+              1
+            ],
+            [
+              "buyerArchiveExpiresAt",
+              1
+            ],
+            [
+              "buyerArchiveKey",
+              -1
+            ]
+          ]
+        },
+        {
+          "name": "seller_trash_expiry",
+          "fields": [
+            [
+              "sellerId",
+              1
+            ],
+            [
+              "sellerArchived",
+              1
+            ],
+            [
+              "sellerArchiveExpiresAt",
+              1
+            ],
+            [
+              "sellerArchiveKey",
+              -1
+            ]
+          ]
+        },
+        {
+          "name": "buyer_orders_archived",
+          "fields": [
+            ["buyerId", 1],
+            ["buyerArchived", 1],
+            ["newestKey", -1],
+            ["createdAt", 1]
+          ]
+        },
+        {
+          "name": "buyer_status_archived",
+          "fields": [
+            ["buyerId", 1],
+            ["buyerArchived", 1],
+            ["status", 1],
+            ["newestKey", -1],
+            ["createdAt", 1]
+          ]
+        },
+        {
+          "name": "seller_orders_archived",
+          "fields": [
+            ["sellerId", 1],
+            ["sellerArchived", 1],
+            ["newestKey", -1],
+            ["createdAt", 1]
+          ]
+        },
+        {
+          "name": "seller_status_archived",
+          "fields": [
+            ["sellerId", 1],
+            ["sellerArchived", 1],
+            ["status", 1],
+            ["newestKey", -1],
+            ["createdAt", 1]
+          ]
+        },
+        {
+          "name": "admin_order_status",
+          "fields": [
+            [
+              "status",
+              1
+            ],
+            [
+              "newestKey",
+              -1
+            ],
+            [
+              "createdAt",
+              1
+            ]
+          ]
+        },
+        {
+          "name": "admin_orders",
+          "fields": [
+            [
+              "newestKey",
+              -1
+            ],
+            [
+              "createdAt",
+              1
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "name": "product_messages",
+      "rules": {
+        "read": false,
+        "write": false
+      },
+      "indexes": [
+        {
+          "name": "order_messages",
+          "fields": [
+            [
+              "orderId",
+              1
+            ],
+            [
+              "newestKey",
+              -1
+            ],
+            [
+              "createdAt",
+              1
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "name": "media_assets",
+      "rules": {
+        "read": false,
+        "write": false
+      },
+      "indexes": [
+        {
+          "name": "unbound_media",
+          "fields": [
+            [
+              "productId",
+              1
+            ],
+            [
+              "createdAt",
+              1
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "name": "media_checks",
+      "rules": {
+        "read": false,
+        "write": false
+      },
+      "indexes": [
+        {
+          "name": "checked_at",
+          "fields": [
+            [
+              "createdAt",
+              1
+            ]
+          ]
+        }
+      ]
     }
   ]
 }

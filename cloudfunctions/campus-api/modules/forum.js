@@ -33,7 +33,7 @@ module.exports = {
         authorNickname: ctx.actor.nickname, content: data.content, status: 'VISIBLE', createdAt: ctx.now }
       await ctx.store.put('comments', comment.id, comment)
       await ctx.store.put('posts', post.id, { ...post, commentCount: post.commentCount + 1 })
-      return { comment: commentView(comment) }
+      return { comment: commentView(comment), commentCount: post.commentCount + 1 }
     }
   }
 }

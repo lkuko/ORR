@@ -1,0 +1,12 @@
+<view class="market-page">
+  <view class="market-heading"><view><text class="market-title">闲置，接着用。</text><text class="market-note">同校好物，当面放心交接。</text></view><button class="cu-btn bg-blue sm" bindtap="publish"><text class="cuIcon-add margin-right-xs"></text>发布</button></view>
+  <view class="market-search"><text class="cuIcon-search"></text><input value="{{keyword}}" maxlength="60" placeholder="搜索教材、耳机、生活用品" aria-label="搜索商品" bindinput="onSearch" bindconfirm="searchNow" confirm-type="search"/><button wx:if="{{keyword}}" bindtap="clearSearch" aria-label="清空搜索"><text class="cuIcon-close"></text></button></view>
+  <scroll-view class="market-categories" scroll-x show-scrollbar="{{false}}"><view class="category-row"><button wx:for="{{categories}}" wx:key="value" class="cu-btn sm {{category === item.value ? 'selected' : ''}}" data-value="{{item.value}}" bindtap="selectCategory">{{item.label}}</button></view></scroll-view>
+  <view class="market-toolbar"><view class="market-sort"><button class="{{sort === 'recommended' ? 'selected' : ''}}" data-value="recommended" bindtap="selectSort">为你发现</button><button class="{{sort === 'newest' ? 'selected' : ''}}" data-value="newest" bindtap="selectSort">最新发布</button></view><text class="market-note">{{sort === 'recommended' ? '收藏热度 + 新鲜度' : '按发布时间'}}</text></view>
+  <view wx:if="{{loading && !products.length}}" class="loading-panel"><view class="loading-line"></view><view class="loading-line short"></view><text class="loading-label">正在寻找校园好物…</text></view>
+  <empty-state wx:elif="{{error && !products.length}}" title="商品暂时未能加载" description="{{error}}" button-text="重试" bind:action="load"/>
+  <empty-state wx:elif="{{!products.length}}" title="{{keyword ? '没有找到匹配商品' : '这个分类还没有商品'}}" description="换个关键词，或把自己的闲置分享给同学。" button-text="发布闲置" bind:action="publish"/>
+  <view class="product-grid"><product-card wx:for="{{products}}" wx:key="id" product="{{item}}" busy="{{favoritesBusy[item.id]}}" bind:open="open" bind:favorite="favorite"/></view>
+  <view wx:if="{{error && products.length}}" class="market-error">{{error}}</view>
+  <view wx:if="{{products.length}}" class="market-more"><button wx:if="{{cursor}}" class="cu-btn bg-white" loading="{{loading}}" disabled="{{loading}}" bindtap="loadMore">{{loading ? '读取中' : '加载更多'}}</button><text wx:else>已经看完了，稍后再来发现好物</text></view>
+</view>

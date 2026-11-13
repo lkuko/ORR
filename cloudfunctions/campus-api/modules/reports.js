@@ -1,6 +1,6 @@
 const v = require('../lib/validation')
 const { check } = require('../lib/errors')
-const targets = { TASK: 'tasks', POST: 'posts', COMMENT: 'comments', USER: 'users' }
+const targets = { TASK: 'tasks', POST: 'posts', COMMENT: 'comments', USER: 'users', PRODUCT: 'products' }
 module.exports = {
   'reports.mine': { async run(ctx) {
     const reports = await ctx.store.list('reports', { reporterId: ctx.actor.id }, 'createdAt', 'desc', 100)
@@ -23,7 +23,7 @@ module.exports = {
       check(target, 'TARGET_NOT_FOUND', '举报对象不存在')
       // Keep only the public context visible when the report was submitted.
       // Historical reports without this snapshot remain readable without reopening hidden content.
-      let visible = data.targetType === 'TASK' ? target.visibility === 'VISIBLE' : target.status === 'VISIBLE'
+      let visible = ['TASK', 'PRODUCT'].includes(data.targetType) ? target.visibility === 'VISIBLE' : target.status === 'VISIBLE'
       if (data.targetType === 'COMMENT') {
         const post = await ctx.store.get('posts', target.postId)
         visible = visible && post?.status === 'VISIBLE'

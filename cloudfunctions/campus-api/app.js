@@ -3,7 +3,8 @@ const { hash, canonical } = require('./lib/validation')
 const { userView } = require('./lib/views')
 const routes = {
   ...require('./modules/users'), ...require('./modules/tasks'), ...require('./modules/messages'),
-  ...require('./modules/forum'), ...require('./modules/reports'), ...require('./modules/admin')
+  ...require('./modules/forum'), ...require('./modules/reports'), ...require('./modules/admin'),
+  ...require('./modules/products'), ...require('./modules/product-orders'), ...require('./modules/market-admin'), ...require('./modules/media')
 }
 function userId(identity, allowedAppId) {
   check(typeof allowedAppId === 'string' && /^wx[0-9a-f]{16}$/.test(allowedAppId), 'CONFIGURATION_ERROR', '服务尚未配置小程序 AppID')
@@ -30,7 +31,7 @@ function timedStore(store, metrics) {
   result.transact = work => store.transact(tx => work(timedStore(tx, metrics)))
   return result
 }
-function createHandler({ store: originalStore, checkText, allowedAppId = process.env.WECHAT_APP_ID, clock = () => new Date(), logger = () => {} }) {
+function createHandler({ store: originalStore, checkText, media, allowedAppId = process.env.WECHAT_APP_ID, clock = () => new Date(), logger = () => {} }) {
   let coldStart = true
   return async function handle(event, identity) {
     const started = Date.now(), cold = coldStart
@@ -43,7 +44,7 @@ function createHandler({ store: originalStore, checkText, allowedAppId = process
       action = event.action
       check(typeof action === 'string' && action.length < 80, 'INVALID_ACTION', '请求操作无效')
       const data = event.data || {}
-      check(typeof data === 'object' && !Array.isArray(data) && JSON.stringify(data).length <= 16000, 'INVALID_REQUEST', '请求内容过长或格式错误')
+      check(typeof data === 'object' && !Array.isArray(data) && JSON.stringify(data).length <= (action === 'media.upload' ? 970000 : 16000), 'INVALID_REQUEST', '请求内容过长或格式错误')
       let result
       if (action === 'system.health') {
         const id = userId(identity, allowedAppId)
@@ -70,7 +71,7 @@ function createHandler({ store: originalStore, checkText, allowedAppId = process
         const route = routes[action]
         const id = actorKey(identity, route.admin, allowedAppId)
         const currentActor = await actor(store, id, route.admin)
-        const ctx = { store, actor: currentActor, admin: !!route.admin, now: clock().toISOString() }
+        const ctx = { store, actor: currentActor, admin: !!route.admin, media, now: clock().toISOString() }
         if (!route.write) result = await route.run(ctx, data)
         else {
           check(typeof event.requestId === 'string' && /^[a-zA-Z0-9_-]{8,128}$/.test(event.requestId), 'INVALID_REQUEST_ID', '缺少有效的请求标识')
@@ -83,13 +84,14 @@ function createHandler({ store: originalStore, checkText, allowedAppId = process
           const existing = await store.get('idempotency', operationId)
           if (existing) result = replay(existing)
           else {
-            const prepared = route.prepare ? route.prepare(data) : data
+            let prepared = route.prepare ? route.prepare(data) : data
             const content = route.content?.(prepared)
             if (content) {
               const contentStarted = Date.now()
               try { await checkText(content, identity.openid, route.scene || 2) }
               finally { metrics.contentCheckMs += Date.now() - contentStarted }
             }
+            if (route.preflight) prepared = await route.preflight({ ...ctx, operationId }, prepared)
             result = await store.transact(async tx => {
               const current = await actor(tx, id, route.admin)
               const record = await tx.get('idempotency', operationId)

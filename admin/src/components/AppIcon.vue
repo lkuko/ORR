@@ -1,6 +1,8 @@
 <script setup>
 defineProps({ name: String })
 const paths = {
+  products: 'M3 9h18L19 3H5L3 9Z M4 9v12h16V9 M9 21v-8h6v8 M3 9a3 3 0 0 0 6 0 3 3 0 0 0 6 0 3 3 0 0 0 6 0',
+  productOrders: 'M6 3h12v18H6V3Z M9 7h6 M9 11h6 M9 15h3',
   reports: 'M4 4h16v12H8l-4 4V4Z M8 8h8 M8 12h5',
   cancellations: 'M8 4H4v4 M4 4l5 5 M16 20h4v-4 M20 20l-5-5 M20 4l-6 6 M4 20l6-6',
   users: 'M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2 M16 4a4 4 0 0 1 0 8 M22 21v-2a4 4 0 0 0-3-3.87 M13 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z',

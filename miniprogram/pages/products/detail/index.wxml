@@ -1,0 +1,20 @@
+<view class="market-page product-detail">
+  <view wx:if="{{loading && !product}}" class="loading-panel"><text class="loading-label">正在读取商品…</text></view>
+  <empty-state wx:elif="{{error}}" title="暂时无法查看商品" description="{{error}}" button-text="重试" bind:action="load"/>
+  <block wx:elif="{{product}}"><swiper wx:if="{{product.urls.length}}" class="product-gallery" indicator-dots="{{product.urls.length > 1}}" indicator-active-color="#2854d9"><swiper-item wx:for="{{product.urls}}" wx:key="*this"><image class="gallery-image" src="{{item}}" mode="aspectFit" data-url="{{item}}" bindtap="preview"/></swiper-item></swiper>
+    <view class="market-section"><view class="price-row"><text class="market-price">¥{{product.price}}</text><text class="cu-tag bg-blue light">{{product.statusLabel}}</text></view><text class="detail-title">{{product.title}}</text><view class="market-facts"><text class="cu-tag bg-gray">{{product.categoryLabel}}</text><text class="cu-tag bg-gray">{{product.conditionLabel}}</text><text>{{product.favoriteCount}} 人收藏</text></view></view>
+    <view class="market-section"><text class="market-section-title">物品详情</text><text class="market-paragraph">{{product.description}}</text><view class="market-facts"><text class="cuIcon-location"></text><text>{{product.publicArea}}</text></view></view>
+    <view class="market-section"><text class="market-section-title">{{product.sellerNickname}} 的闲置</text><text class="market-note">发布于 {{product.createdLabel}}</text><text wx:if="{{product.moderationReason}}" class="error-text">管理说明：{{product.moderationReason}}</text><view class="market-meta product-tools"><text>商品编号 {{product.number}}</text><button class="text-button" bindtap="copy">复制编号</button><button wx:if="{{!product.isSeller}}" class="text-button" bindtap="report">举报商品</button></view></view>
+    <view class="product-dock">
+      <text class="product-dock-note">当面验货后付款，预约不扣款。</text>
+      <view class="market-actions" wx:if="{{!product.isSeller}}">
+        <button class="favorite-button" disabled="{{favoriteBusy}}" bindtap="favorite"><text class="cuIcon-{{product.favorited ? 'favorfill' : 'favor'}}"></text><text>{{product.favorited ? '已收藏' : '收藏'}}</text></button>
+        <button class="cu-btn bg-blue" disabled="{{acting || product.status !== 'AVAILABLE'}}" loading="{{acting}}" bindtap="reserve">{{product.status === 'AVAILABLE' ? '预约并联系卖家' : product.statusLabel}}</button>
+      </view>
+      <view class="market-actions" wx:else>
+        <button wx:if="{{product.visibility === 'VISIBLE' && (product.status === 'AVAILABLE' || product.status === 'WITHDRAWN')}}" class="cu-btn bg-blue light" disabled="{{acting}}" bindtap="setStatus">{{product.status === 'WITHDRAWN' ? '重新上架' : '下架商品'}}</button>
+        <button class="cu-btn bg-blue" bindtap="orders">查看交易订单</button>
+      </view>
+    </view>
+  </block>
+</view>

@@ -1,0 +1,23 @@
+@import "../../../styles/market.wxss";
+.order-state { padding: 16rpx 0; }
+.order-status-heading { display: flex; align-items: center; gap: 16rpx; }
+.order-status-heading .market-title { flex: 1; min-width: 0; }
+.order-status-heading .text-button { flex: none; }
+.participant-line { display: flex; justify-content: space-between; gap: 24rpx; margin-bottom: 16rpx; font-size: 27rpx; }
+.participant-line text:first-child { color: #66738a; flex: none; }
+.participant-line text:last-child { text-align: right; word-break: break-all; }
+.message-heading { display: flex; justify-content: space-between; gap: 16rpx; align-items: center; }
+.message-heading .market-section-title { margin: 0; }
+.trade-message { padding: 24rpx 0; border-bottom: 1rpx solid #e1e7e5; }
+.trade-detail { padding-bottom: calc(290rpx + env(safe-area-inset-bottom)); }
+.trade-dock { position: fixed; z-index: 20; right: 0; bottom: 0; left: 0; padding: 16rpx 32rpx calc(20rpx + env(safe-area-inset-bottom)); background: #fff; border-top: 1rpx solid #e1e7e5; box-shadow: 0 -4rpx 18rpx rgba(32,49,55,.06); }
+.dock-guidance { display: flex; gap: 12rpx; align-items: center; color: #66738a; font-size: 23rpx; line-height: 1.5; margin-bottom: 14rpx; }
+.dock-guidance > text { flex: 1; min-width: 0; }
+.dock-guidance .text-button { flex: none; min-height: 64rpx; font-size: 24rpx; padding: 0; }
+.trade-dock .dock-buttons { margin-top: 0; }
+.dock-buttons > button { width: 0; flex: 1; white-space: normal; overflow-wrap: anywhere; padding-right: 12rpx; padding-left: 12rpx; }
+.archive-banner { display: block; margin-top: 18rpx; padding: 18rpx; border-left: 4rpx solid #2854d9; background: #e9efff; color: #244dbf; font-size: 25rpx; }
+.message-author { display: flex; justify-content: space-between; gap: 12rpx; font-size: 23rpx; margin-bottom: 12rpx; color: #66738a; }
+.message-author text:first-child { color: #2854d9; font-weight: 600; }
+.trade-composer { margin-top: 24rpx; }
+.market-page .trade-composer .composer-send { flex: 0 0 116rpx; width: 116rpx; min-height: 88rpx; padding: 16rpx 12rpx; }

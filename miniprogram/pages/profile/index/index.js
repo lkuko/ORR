@@ -15,6 +15,8 @@ Page({
     wx.switchTab({ url: '/pages/orders/list/index' })
   },
   openReports() { wx.navigateTo({ url: '/pages/report/list/index' }) },
+  openProducts(event) { wx.navigateTo({ url: '/pages/products/library/index?mode=' + event.currentTarget.dataset.mode }) },
+  openTrades(event) { wx.navigateTo({ url: '/pages/product-orders/list/index?role=' + event.currentTarget.dataset.role }) },
   editNickname() {
     wx.showModal({ title: '设置昵称', editable: true, placeholderText: '输入校园昵称', success: result => {
       const nickname = (result.content || '').trim().slice(0, 40)

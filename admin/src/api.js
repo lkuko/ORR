@@ -40,5 +40,10 @@ export const api = {
   resolveCancellation: (id, cancelled, reason) => call('admin.resolveCancellation', { id: String(id), cancelled, reason }, true),
   users: q => call('admin.users', { q }),
   setUserStatus: (id, status, reason) => call('admin.setUserStatus', { id: String(id), status, reason }, true),
-  actions: () => call('admin.actions')
+  actions: () => call('admin.actions'),
+  products: data => call('admin.products', data),
+  productOrders: data => call('admin.productOrders', data),
+  marketImages: productIds => call('admin.mediaUrls', { productIds }),
+  hideProduct: (id, reason) => call('admin.hideProduct', { id, reason }, true),
+  resolveProductOrder: (id, cancelled, reason) => call('admin.resolveProductOrder', { id, cancelled, reason }, true)
 }

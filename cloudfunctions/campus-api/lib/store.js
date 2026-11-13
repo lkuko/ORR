@@ -23,7 +23,17 @@ function createStore(db, root = db) {
     async list(collection, filter = {}, order = 'createdAt', direction = 'desc', limit = 100) {
       const conditions = {}
       for (const [key, value] of Object.entries(filter)) {
-        conditions[key] = value && typeof value === 'object' && '$in' in value ? root.command.in(value.$in) : value
+        if (value && typeof value === 'object') {
+          const operators = { $in: 'in', $lt: 'lt', $lte: 'lte', $gt: 'gt', $gte: 'gte', $ne: 'neq' }
+          if ('$regex' in value) conditions[key] = root.RegExp({ regexp: value.$regex, options: 'i' })
+          else {
+            const parts = Object.entries(value).map(([op, operand]) => {
+              if (!operators[op]) throw new Error('Unsupported query operator')
+              return root.command[operators[op]](operand)
+            })
+            conditions[key] = parts.reduce((left, right) => left.and(right))
+          }
+        } else conditions[key] = value
       }
       const response = await db.collection(collection).where(conditions).orderBy(order, direction).limit(limit).get()
       return response.data.map(normalize)

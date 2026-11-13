@@ -175,7 +175,7 @@ tbody tr:hover { background: #fbfcff; }
   .admin-shell { display: block; }
   .sidebar { position: static; display: grid; grid-template-columns: minmax(0, 1fr) auto; height: auto; min-height: 0; padding: 18px 24px 12px; border-right: 0; border-bottom: 1px solid var(--line); gap: 18px; }
   .sidebar .brand { margin: 0; }
-  .sidebar nav { grid-column: 1 / -1; grid-row: 2; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+  .sidebar nav { grid-column: 1 / -1; grid-row: 2; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
   .sidebar nav button { justify-content: center; padding: 10px 6px; min-height: 44px; font-size: 13px; }
   .sidebar nav .nav-arrow, .sidebar-note { display: none; }
   .sidebar-user { margin: 0; padding: 0; border: 0; }

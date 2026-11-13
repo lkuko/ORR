@@ -9,7 +9,13 @@
     "pages/forum/detail/index",
     "pages/forum/create/index",
     "pages/report/create/index",
-    "pages/report/list/index"
+    "pages/report/list/index",
+    "pages/products/list/index",
+    "pages/products/create/index",
+    "pages/products/detail/index",
+    "pages/products/library/index",
+    "pages/product-orders/list/index",
+    "pages/product-orders/detail/index"
   ],
   "window": {
     "navigationBarTextStyle": "black",
@@ -28,6 +34,12 @@
         "text": "跑腿",
         "iconPath": "assets/tabbar/tasks.png",
         "selectedIconPath": "assets/tabbar/tasks-active.png"
+      },
+      {
+        "pagePath": "pages/products/list/index",
+        "text": "二手",
+        "iconPath": "assets/tabbar/market.png",
+        "selectedIconPath": "assets/tabbar/market-active.png"
       },
       {
         "pagePath": "pages/forum/list/index",

@@ -20,6 +20,7 @@
 npm ci
 npm --prefix admin ci
 npm --prefix cloudfunctions/campus-api ci
+npm --prefix cloudfunctions/media-callback ci
 npm run verify
 node scripts/build-cloud.cjs
 
@@ -30,21 +31,31 @@ node scripts/build-cloud.cjs
   --remote-npm-install
 ```
 
-部署输入必须是 `.local/deploy/campus-api/`，其中业务代码合并成独立入口，SDK 在云端安装。当前微信工具的目录式部署曾导致云端缺失相对依赖，打包步骤用于避免该问题。
+上面的命令部署 campus-api；随后以相同 AppID 和 env ID，将 path 改为 `.local/deploy/media-callback`，再完整部署回调函数。默认打包脚本生成两个自包含目录，SDK 在云端安装。不能直接部署源码目录；media-callback 源码引用了兄弟目录的数据库适配，未经打包会缺少依赖。
 
 打包脚本从 `WECHAT_APP_ID` 环境变量或 `project.private.config.json` 的 `appid` 读取绑定值，并仅注入被 Git 忽略的部署产物；缺失或仍为占位符时停止构建。直接运行未打包的云函数源码则需要在云函数环境变量中设置 `WECHAT_APP_ID`，不能使用客户端传入的 AppID 代替服务端绑定配置。
 
 2026-11-12 实测运行时为 `Nodejs16.13`，函数状态 `Active`，超时 20 秒。运行时变更要回读实际配置并执行健康检查，不能仅凭更新请求成功判断。事务本身遵守平台 10 秒限制。
 
-`config.json` 声明 `security.msgSecCheck` 权限。没有明确 `pass` 时拒绝发布内容。
+`campus-api/config.json` 声明 `security.msgSecCheck` 和 `security.mediaCheckAsync`。本项目实测可在微信开发者工具的云函数增量上传界面选择源码 `config.json` 执行“更新文件”，使 `mediaCheckAsync` 权限同步生效；完整部署也可以同步配置。单独更新 JS 代码不代表接口权限已更新。`-604101` 表示函数无接口权限；官方说明权限可能缓存约 10 分钟，应核对配置上传结果并等待权限生效，不要循环重部署或关闭审核。参考：[微信云调用](https://developers.weixin.qq.com/miniprogram/dev/wxcloud/guide/openapi/openapi.html)。没有明确 `pass` 时拒绝发布内容。
+
+### 图片审核消息推送
+
+1. 云存储设为 PRIVATE；六个新集合及其索引/规则创建后，再进行真实图片测试。
+2. 在微信开发者工具「云开发控制台 → 设置 → 其他设置 → 消息推送」新增或核对规则：云函数模式，`MsgType=event`、`Event=wxa_media_check`，指向 `media-callback` 并启用。
+3. 从真实微信身份调用 `media.upload` 上传无害测试图；必须获得真实 trace，不手工写 media_checks 或伪造回调。
+4. 回读 media_assets 与 media_checks，再调用 media.status 确认状态。平台审核消息的 SDK 上下文 `SOURCE` 必须为 `wx_callback`；调用参数自称该来源不能替代运行时身份。回调为空、来源错误或 AppID 不符时应被拒绝；函数显示 Active 只证明就绪，不证明回调已收到。
+5. 用户侧待审核期间显示状态，异常保留重试入口；全部图片通过前禁止发布。原始图片、临时链接、openid、完整事件及平台凭据不得记录到普通日志。
+
+2026-11-13 实际回读发现平台审核事件来源为 `wx_callback`，处理器原先错误接受 `wx_trigger`，导致真实 `pass` 未落正式审核记录。修复后重新打包部署 `media-callback`，回读为 Active；通过已有未绑定商品的测试资产执行真实审核重试，`media_checks` 生成 `PASSED`，`media.status` 返回 `PASSED`。小程序调用伪造审核事件返回 `accepted: false`。测试探针没有创建公开商品；详细范围见验收记录。两个函数回读为 Active、Nodejs16.13、20 秒超时。
 
 ## 云数据库
 
-按 `database/collections.json` 建立 10 个集合和声明索引。全部集合配置客户端读写禁止（控制台 `ADMINONLY`）。云函数在高权限数据库访问之外另行核对身份和业务权限。
+按 `database/collections.json` 建立 16 个集合和声明索引。全部集合配置客户端读写禁止（控制台 `ADMINONLY`）。云函数在高权限数据库访问之外另行核对身份和业务权限。
 
 集合声明中的 `environment` 是占位符，实际部署环境由工具参数指定，不要把真实标识写回该文件。
 
-当前集合已创建，权限已逐个回读；小程序 SDK 直接读取 10 个集合均返回权限拒绝，直接写 `users` 同样拒绝。重建环境后必须重新核验，不能只检查本地声明文件。
+原 10 个集合曾逐个回读规则，并验证小程序 SDK 直读拒绝、直写 users 拒绝。2026-11-13 新增六个集合和索引已创建回读，全部为 ADMINONLY，存储为 PRIVATE；新增资源的运行时权限验收另行记录。重建环境后必须重新核验，不能只检查本地声明文件。
 
 本轮已新增并通过 `listIndexes` 回读确认 `reports.reporter_history`：`reporterId ASC, createdAt DESC`。客户端通过 `reports.mine` 读取本人举报；云函数从可信微信身份确定举报人，不接受客户端指定查询其他人。
 
@@ -89,7 +100,7 @@ node scripts/check-admin-hosting.cjs 'https://YOUR_CLOUDBASE_HOST/orr-admin/inde
 
 管理员账号已通过短时受限初始化创建，凭据保存在本机 `.local/admin-credentials.json`，不进入 Git。真实网页登录、云端管理员角色和举报队列读取已经验证。上线前应由账号持有人设置自己的密码。
 
-环境初始化使用过的 `orr-setup` 临时云函数已删除；云函数列表已回读确认只剩 `campus-api`。不要把 `.local/` 中的一次性初始化程序部署为长期入口。
+环境初始化使用过的 `orr-setup` 临时云函数已删除。原版本只有 campus-api；二手版本增加 media-callback。不要把 `.local/` 中的一次性初始化程序部署为长期入口。
 
 ## 验证与上传
 

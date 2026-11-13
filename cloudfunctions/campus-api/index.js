@@ -3,12 +3,14 @@ const cloudbase = require('@cloudbase/node-sdk')
 const { createStore } = require('./lib/store')
 const { createContentGuard } = require('./lib/content-guard')
 const { createHandler } = require('./app')
+const { createMediaGateway } = require('./lib/media')
 
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV, throwOnNotFound: false })
 const web = cloudbase.init({ env: cloudbase.SYMBOL_CURRENT_ENV })
 const handle = createHandler({
   store: createStore(cloud.database()),
   checkText: createContentGuard(cloud),
+  media: createMediaGateway(cloud),
   logger: metrics => console.info(JSON.stringify(metrics))
 })
 exports.main = async event => {

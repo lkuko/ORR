@@ -3,6 +3,7 @@ import { computed, nextTick, onMounted, ref } from 'vue'
 import { api } from './api'
 import AppIcon from './components/AppIcon.vue'
 import RecordId from './components/RecordId.vue'
+import MarketPanel from './components/MarketPanel.vue'
 import { typeLabel, actionLabel, statusLabel, formatTime, actionDetails } from './presentation'
 
 const token = ref(false)
@@ -19,6 +20,7 @@ const cancellations = ref([])
 const users = ref([])
 const actions = ref([])
 const reportStatus = ref('OPEN')
+const marketPanel = ref(null)
 const restoring = ref(true)
 const acting = ref(false)
 const updatedAt = ref('')
@@ -58,6 +60,8 @@ function finishReason(confirmed) {
 }
 
 const tabs = [
+  { id: 'products', label: '二手商品', description: '检索校园闲置，核实图片与描述，管理商品可见性。' },
+  { id: 'productOrders', label: '交易订单', description: '跟进预约与交付，处理交易取消和双方分歧。' },
   { id: 'reports', label: '举报队列', description: '核对原文与举报原因，让每一条反馈都有处理结果。' },
   { id: 'cancellations', label: '取消争议', description: '查看双方的取消分歧，决定取消或恢复任务。' },
   { id: 'users', label: '用户管理', description: '查看用户状态，并为账号处置留下明确说明。' },
@@ -116,6 +120,7 @@ async function loadTab() {
     if (selected === 'cancellations') { const result = await api.cancellations(); if (request === loadRequest) cancellations.value = result.tasks }
     if (selected === 'users') { const result = await api.users(query); if (request === loadRequest) users.value = result.users }
     if (selected === 'actions') { const result = await api.actions(); if (request === loadRequest) actions.value = result.actions }
+    if (['products', 'productOrders'].includes(selected)) { await nextTick(); if (request === loadRequest) await marketPanel.value?.load() }
     if (request === loadRequest) updatedAt.value = formatTime(new Date())
   } catch (err) {
     if (request !== loadRequest) return
@@ -252,6 +257,8 @@ onMounted(async () => {
           </article>
         </div>
       </section>
+
+      <MarketPanel v-if="tab === 'products' || tab === 'productOrders'" :key="tab" ref="marketPanel" :mode="tab" :ask-reason="askReason" @acting="acting = $event" />
 
       <section v-if="tab === 'cancellations'" class="content-section" :aria-busy="busy">
         <div class="section-toolbar"><h2>等待裁定的任务</h2><span class="result-count">{{ busy ? '更新中' : cancellations.length + ' 条争议' }}</span></div>

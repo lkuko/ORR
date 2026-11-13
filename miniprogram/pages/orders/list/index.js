@@ -36,5 +36,6 @@ Page({
   openTask(event) {
     wx.navigateTo({ url: `/pages/tasks/detail/index?id=${event.currentTarget.dataset.id}` })
   },
-  openCreate() { wx.navigateTo({ url: '/pages/tasks/create/index' }) }
+  openCreate() { wx.navigateTo({ url: '/pages/tasks/create/index' }) },
+  openTrades() { wx.navigateTo({ url: '/pages/product-orders/list/index' }) }
 })

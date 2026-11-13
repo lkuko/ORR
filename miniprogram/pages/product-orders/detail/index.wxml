@@ -1,0 +1,51 @@
+<view class="market-page trade-detail">
+  <view wx:if="{{loading && !order}}" class="loading-panel"><text class="loading-label">正在读取交易…</text></view>
+  <empty-state wx:elif="{{error}}" title="暂时无法查看订单" description="{{error}}" button-text="重试" bind:action="load"/>
+  <block wx:elif="{{order}}">
+    <view class="order-state">
+      <view class="order-status-heading"><text class="market-title">{{order.statusLabel}}</text><button class="text-button" bindtap="load" disabled="{{loading || acting}}">{{loading ? '刷新中' : '刷新状态'}}</button></view>
+      <text class="market-note">{{order.hint}}</text>
+      <text wx:if="{{order.archived}}" class="archive-banner">已移入你的回收站 · 保留 {{order.retentionDays}} 天</text>
+    </view>
+    <view class="market-section">
+      <text class="market-section-title">{{order.title}}</text><text class="market-price">¥{{order.price}}</text>
+      <text class="market-note">交易区域：{{order.publicArea}}</text>
+      <view class="market-meta product-tools"><text>订单编号 {{order.number}}</text><button class="text-button" bindtap="copy">复制编号</button><button wx:if="{{order.isBuyer}}" class="text-button" bindtap="report">举报商品</button></view>
+      <button class="text-button" bindtap="product">查看商品详情 <text class="cuIcon-right"></text></button>
+    </view>
+    <view class="market-section">
+      <view class="participant-line"><text>卖家</text><text>{{order.sellerNickname}}</text></view>
+      <view class="participant-line"><text>买家</text><text>{{order.buyerNickname}}</text></view>
+      <text wx:if="{{order.cancelReason}}" class="market-note">取消原因：{{order.cancelReason}}</text>
+      <text wx:if="{{order.resolution}}" class="market-note">管理说明：{{order.resolution}}</text>
+      <block wx:if="{{order.archived}}"><text class="market-note">删除于 {{order.archivedLabel}}</text><text class="market-note">保留至 {{order.expiresLabel}}，到期后无法恢复。</text></block>
+    </view>
+    <view class="market-section" id="trade-messages">
+      <view class="message-heading"><text class="market-section-title">交易留言</text><button class="text-button" bindtap="loadMessages" disabled="{{messageLoading}}">刷新</button></view>
+      <text class="market-note">仅买卖双方可见，在这里约好交付时间。</text>
+      <button wx:if="{{messageCursor}}" class="text-button" bindtap="older" disabled="{{messageLoading}}">查看更早留言</button>
+      <view wx:for="{{messages}}" wx:key="id" class="trade-message"><view class="message-author"><text>{{item.senderNickname}}</text><text>{{item.createdLabel}}</text></view><text class="market-paragraph">{{item.content}}</text></view>
+      <text wx:if="{{!messages.length && !messageLoading}}" class="market-note">还没有留言，可以先和对方打个招呼。</text>
+      <text wx:if="{{messageError}}" class="error-text">{{messageError}}</text>
+      <view wx:if="{{order.active}}" class="inline-composer trade-composer">
+        <input class="composer-input" focus="{{messageFocus}}" bindfocus="focusMessage" bindblur="blurMessage" value="{{draft}}" bindinput="input" maxlength="500" placeholder="约个时间，当面交接" confirm-type="send" bindconfirm="send"/>
+        <button class="primary-button composer-send" bindtap="send" disabled="{{sending || !draft}}" loading="{{sending}}">发送</button>
+      </view>
+      <text wx:else class="market-note">交易已结束，历史留言仍可查看。</text>
+    </view>
+    <text class="form-note">平台不代收费用，请核实物品后再线下付款。</text>
+    <view class="trade-dock" wx:if="{{!messageFocus}}">
+      <view class="dock-guidance">
+        <text>{{order.archived ? '到期前可恢复到你的交易记录' : order.status === 'ACCEPTED' ? (order.isBuyer ? '收到商品并完成付款后，再确认' : '商品已预留，直接与买家约好交付') : order.active ? order.hint : '已结束的交易可移入个人回收站'}}</text>
+        <button wx:if="{{order.status === 'ACCEPTED' || (order.status === 'PENDING' && order.isBuyer)}}" class="text-button" data-action="cancel" bindtap="action" disabled="{{acting || sending}}">{{order.status === 'PENDING' ? '取消预约' : '申请取消'}}</button>
+      </view>
+      <view class="market-actions dock-buttons">
+        <block wx:if="{{order.archived}}"><button class="cu-btn bg-blue" bindtap="restore" disabled="{{acting}}" loading="{{acting}}">恢复记录</button></block>
+        <block wx:elif="{{order.canArchive}}"><button class="cu-btn bg-gray" bindtap="archive" disabled="{{acting}}">删除我的记录</button></block>
+        <block wx:elif="{{order.status === 'PENDING' && order.isSeller}}"><button class="cu-btn bg-gray" data-action="cancel" bindtap="action" disabled="{{acting}}">拒绝预约</button><button class="cu-btn bg-blue" data-action="accept" bindtap="action" disabled="{{acting}}">确认预约</button></block>
+        <block wx:elif="{{order.canRespond}}"><button class="cu-btn bg-gray" data-action="cancelRespond" data-agree="{{false}}" bindtap="action" disabled="{{acting}}">申请管理员处理</button><button class="cu-btn bg-blue" data-action="cancelRespond" data-agree="{{true}}" bindtap="action" disabled="{{acting}}">同意取消</button></block>
+        <block wx:else><button class="cu-btn {{order.status === 'ACCEPTED' && order.isBuyer ? 'bg-gray' : 'bg-blue'}}" bindtap="contact" disabled="{{acting}}">联系{{order.isBuyer ? '卖家' : '买家'}}</button><button wx:if="{{order.status === 'ACCEPTED' && order.isBuyer}}" class="cu-btn bg-blue" data-action="confirm" bindtap="action" disabled="{{acting || sending}}" loading="{{acting}}">确认交易完成</button></block>
+      </view>
+    </view>
+  </block>
+</view>

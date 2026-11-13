@@ -15,7 +15,10 @@ function taskView(task) {
   const rewardLabel = task.rewardAmount == null ? '互助' : '¥' + Number(task.rewardAmount).toFixed(2)
   return { ...task, categoryLabel: categoryLabels[task.category] || '其他', statusLabel: statusLabels[task.status] || '未知状态', createdLabel: dateTime(task.createdAt), deadlineLabel: dateTime(task.deadlineAt), rewardLabel, hasReward: task.rewardAmount !== null && task.rewardAmount !== undefined, expired: !!task.deadlineAt && new Date(task.deadlineAt).getTime() <= Date.now() }
 }
-function postView(post) {
-  return { ...post, authorInitial: (post.authorNickname || '同').slice(0, 1), createdLabel: dateTime(post.createdAt), commentCount: Number(post.commentCount || (post.comments || []).length), comments: (post.comments || []).map(comment => ({ ...comment, authorInitial: (comment.authorNickname || '同').slice(0, 1), createdLabel: dateTime(comment.createdAt) })) }
+function commentView(comment) {
+  return { ...comment, authorInitial: (comment.authorNickname || '同').slice(0, 1), createdLabel: dateTime(comment.createdAt) }
 }
-module.exports = { categoryLabels, statusLabels, dateTime, taskView, postView, shortId }
+function postView(post) {
+  return { ...commentView(post), commentCount: Number(post.commentCount ?? (post.comments || []).length), comments: (post.comments || []).map(commentView) }
+}
+module.exports = { categoryLabels, statusLabels, dateTime, taskView, postView, commentView, shortId }

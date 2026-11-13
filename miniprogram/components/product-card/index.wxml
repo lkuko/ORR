@@ -1,0 +1,8 @@
+<view class="product-card">
+  <view role="button" aria-label="查看{{product.title}}" bindtap="open" hover-class="pressed">
+    <image wx:if="{{product.cover}}" class="product-cover" src="{{product.cover}}" mode="aspectFill" lazy-load />
+    <view wx:else class="product-cover product-placeholder"><text class="cuIcon-shop"></text><text>{{product.unavailable ? '商品已下架' : '商品照片'}}</text></view>
+    <view class="product-body"><text class="product-title">{{product.title}}</text><view class="product-tags"><text wx:if="{{product.conditionLabel}}">{{product.conditionLabel}}</text><text wx:if="{{product.status !== 'AVAILABLE' && product.statusLabel}}">{{product.statusLabel}}</text></view><text wx:if="{{product.price}}" class="product-price">¥{{product.price}}</text><text class="product-area">{{product.publicArea || '此商品暂不可查看'}}</text></view>
+  </view>
+  <view class="product-bottom"><text class="product-seller">{{product.sellerNickname || '已收藏商品'}}</text><button wx:if="{{!product.isSeller}}" class="product-favorite {{product.favorited ? 'selected' : ''}}" disabled="{{busy}}" bindtap="favorite" aria-label="{{product.favorited ? '取消收藏' : '收藏商品'}}"><text class="cuIcon-{{product.favorited ? 'favorfill' : 'favor'}}"></text><text>{{product.unavailable ? '移除' : product.favoriteCount}}</text></button></view>
+</view>

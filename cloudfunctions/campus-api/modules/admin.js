@@ -2,7 +2,7 @@ const v = require('../lib/validation')
 const { check } = require('../lib/errors')
 const { userView } = require('../lib/views')
 const { loadTask, saveTask, activeParticipants } = require('../lib/task-records')
-const targets = { TASK: 'tasks', POST: 'posts', COMMENT: 'comments', USER: 'users' }
+const targets = { TASK: 'tasks', POST: 'posts', COMMENT: 'comments', USER: 'users', PRODUCT: 'products' }
 async function audit(ctx, action, targetType, targetId, details) {
   await ctx.store.put('admin_action_logs', v.hash('audit', ctx.operationId), {
     adminId: ctx.actor.id, adminUsername: ctx.actor.username, action, targetType, targetId, details, createdAt: ctx.now
@@ -19,7 +19,7 @@ const routes = {
     const item = await ctx.store.get(targets[data.type], v.id(data.id))
     check(item, 'TARGET_NOT_FOUND', '内容不存在')
     return { content: {
-      id: item.id, authorId: item.authorId || item.ownerId || item.id,
+      id: item.id, authorId: item.authorId || item.ownerId || item.sellerId || item.id,
       content: item.content || item.description || item.nickname, title: item.title || null,
       publicArea: item.publicArea || null, status: item.status, visibility: item.visibility || null
     } }
@@ -66,10 +66,11 @@ const routes = {
   'admin.hide': {
     write: true,
     prepare(data) {
-      check(['TASK', 'POST', 'COMMENT'].includes(data.type), 'INVALID_TARGET', '下架对象无效')
+      check(['TASK', 'POST', 'COMMENT', 'PRODUCT'].includes(data.type), 'INVALID_TARGET', '下架对象无效')
       return { type: data.type, id: v.id(data.id), reason: v.text(data.reason, 2, 300, '下架原因') }
     },
     async run(ctx, data) {
+      if (data.type === 'PRODUCT') return require('./market-admin')['admin.hideProduct'].run(ctx, data)
       const item = await ctx.store.get(targets[data.type], data.id)
       check(item, 'TARGET_NOT_FOUND', '内容不存在')
       if (data.type === 'TASK') {
@@ -105,6 +106,13 @@ const routes = {
       await ctx.store.put('users', user.id, { ...user, status: data.status, revision: (user.revision || 0) + 1 })
       // Maintained atomically by every task transition; no transaction where-query.
       if (data.status === 'BLOCKED' && user.status !== 'BLOCKED') {
+        for (const id of user.activeProductIds || []) {
+          const item = await ctx.store.get('products', id)
+          if (!item) continue
+          await ctx.store.put('products', id, { ...item, visibility: 'HIDDEN',
+            status: item.status === 'AVAILABLE' ? 'WITHDRAWN' : item.status,
+            moderationReason: '卖家账号已停用：' + data.reason, updatedAt: ctx.now })
+        }
         for (const id of user.activeTaskIds || []) {
           const task = await loadTask(ctx.store, id)
           if (!['OPEN', 'ASSIGNED', 'COMPLETION_PENDING', 'CANCEL_PENDING'].includes(task.status)) continue

@@ -1,0 +1,1 @@
+{ "navigationBarTitleText": "校园二手", "enablePullDownRefresh": true, "usingComponents": { "product-card": "/components/product-card/index", "empty-state": "/components/empty-state/index" } }

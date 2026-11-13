@@ -57,7 +57,7 @@ function mutate(action, data = {}) {
     try { wx.removeStorageSync(key) } catch (_) {}
     return result
   }).catch(error => {
-    if (error.code && !['TRANSPORT_ERROR', 'INTERNAL_ERROR', 'BUSY'].includes(error.code)) {
+    if (error.code && !['TRANSPORT_ERROR', 'INTERNAL_ERROR', 'BUSY', 'MEDIA_UPLOAD_FAILED'].includes(error.code)) {
       try { wx.removeStorageSync(key) } catch (_) {}
     }
     throw error

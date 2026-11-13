@@ -1,4 +1,9 @@
 .page-title { font-size: 41rpx; }
+.market-order-entry { display: flex; width: 100%; min-height: 104rpx; align-items: center; justify-content: space-between; gap: 20rpx; margin: 12rpx 0 26rpx; padding: 20rpx 24rpx; border: 1rpx solid #dce4f3; border-radius: 12rpx; background: #fff; text-align: left; }
+.entry-copy { flex: 1; min-width: 0; }
+.entry-title { display: block; color: #203137; font-size: 28rpx; font-weight: 650; }
+.entry-note { display: block; margin-top: 6rpx; color: #66738a; font-size: 22rpx; line-height: 1.5; }
+.entry-chevron { flex: none; color: #2854d9; font-size: 38rpx; }
 .segmented-control { display: flex; gap: 6rpx; margin-top: 30rpx; padding: 7rpx; border-radius: 18rpx; background: #e5ebf7; }
 .segmented-control .segment { flex: 1; min-width: 0; width: 0; min-height: 84rpx; margin: 0; padding: 20rpx 12rpx; border-radius: 13rpx; color: #66738a; background: transparent; font-size: 27rpx; font-weight: 500; }
 .segmented-control .segment.active { background: #fff; color: #2854d9; font-weight: 700; }

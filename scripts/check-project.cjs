@@ -24,7 +24,7 @@ function inspect(folder) {
     } else if (file.endsWith('.json')) { JSON.parse(read(file)); jsonFiles++ }
   }
 }
-for (const dir of ['miniprogram', 'cloudfunctions/campus-api']) inspect(dir)
+for (const dir of ['miniprogram', 'cloudfunctions/campus-api', 'cloudfunctions/media-callback']) inspect(dir)
 const project = JSON.parse(read('project.config.json'))
 const privatePath = path.join(root, 'project.private.config.json')
 const local = fs.existsSync(privatePath) ? JSON.parse(read('project.private.config.json')) : {}
@@ -54,6 +54,9 @@ for (const envVersion of ['develop', 'trial', 'release', 'unknown']) {
   if (process.argv.includes('--release') && envVersion === 'release') assert.ok(module.exports.cloudEnv, 'Production environment is not configured')
 }
 const schema = JSON.parse(read('database/collections.json'))
-assert.equal(schema.collections.length, 10)
+for (const name of ['users', 'tasks', 'posts', 'reports', 'products', 'favorites', 'product_orders', 'product_messages', 'media_assets', 'media_checks']) {
+  assert.ok(schema.collections.some(c => c.name === name), 'Missing collection: ' + name)
+}
+assert.equal(new Set(schema.collections.map(c => c.name)).size, schema.collections.length)
 for (const collection of schema.collections) assert.deepEqual(collection.rules, { read: false, write: false })
 console.log('Project checks passed:', scripts, 'scripts,', jsonFiles, 'JSON files,', app.pages.length, 'pages; cloud transport and client database denial declared.')

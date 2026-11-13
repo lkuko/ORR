@@ -1,6 +1,6 @@
 const reportsApi = require('../../../services/reports')
 const { dateTime, shortId } = require('../../../utils/format')
-const typeLabels = { TASK: '任务', POST: '帖子', COMMENT: '评论', USER: '用户' }
+const typeLabels = { TASK: '任务', POST: '帖子', COMMENT: '评论', USER: '用户', PRODUCT: '商品' }
 const statuses = { OPEN: '待处理', RESOLVED: '已处理', DISMISSED: '不予处理' }
 
 Page({
