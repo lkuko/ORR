@@ -31,7 +31,6 @@ Component({
       if (!gesture.axis && Math.max(Math.abs(dx), Math.abs(dy)) > 8) gesture.axis = Math.abs(dx) > Math.abs(dy) * 1.2 ? 'x' : 'y'
       if (gesture.axis !== 'x') return
       gesture.dx = dx
-      this.triggerEvent('swiping', { id: this.properties.recordId })
       this.setData({ dragging: true, offset: Math.max(-this.actionWidth, Math.min(0, gesture.offset + dx)) })
     },
     end() {
