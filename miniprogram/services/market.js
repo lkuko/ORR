@@ -19,6 +19,7 @@ module.exports = {
   orders: async data => { const r = await call('productOrders.mine', data); return { ...r, orders: r.orders.map(orderView) } },
   orderDetail: id => call('productOrders.get', { id, includeMessages: true }).then(data => ({ ...data, order: orderView(data.order) })),
   orderAction: (id, action, data = {}) => mutate('productOrders.' + action, { id, ...data }).then(r => orderView(r.order)),
+  clearOrders: ids => mutate('productOrders.clear', { ids }),
   messages: data => call('productOrders.messages', data),
   send: (id, content) => mutate('productOrders.send', { id, content }).then(r => r.message),
   upload: base64 => mutate('media.upload', { base64 }).then(r => r.media),

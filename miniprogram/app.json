@@ -15,13 +15,14 @@
     "pages/products/detail/index",
     "pages/products/library/index",
     "pages/product-orders/list/index",
-    "pages/product-orders/detail/index"
+    "pages/product-orders/detail/index",
+    "pages/order-trash/index"
   ],
   "window": {
     "navigationBarTextStyle": "black",
     "navigationBarTitleText": "校园互助",
     "navigationBarBackgroundColor": "#ffffff",
-    "backgroundColor": "#f5f7f6"
+    "backgroundColor": "#f1f5fb"
   },
   "tabBar": {
     "color": "#66738a",

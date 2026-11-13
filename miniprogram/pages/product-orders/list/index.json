@@ -1,1 +1,9 @@
-{ "navigationBarTitleText": "二手交易订单", "enablePullDownRefresh": true, "usingComponents": { "empty-state": "/components/empty-state/index" } }
+{
+  "navigationBarTitleText": "订单",
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "empty-state": "/components/empty-state/index",
+    "status-tag": "/components/status-tag/index",
+    "swipe-row": "/components/swipe-row/index"
+  }
+}

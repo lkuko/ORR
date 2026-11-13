@@ -26,3 +26,10 @@
 没有迁移旧 MySQL 数据；不得按昵称匹配身份，也不得跨 AppID 复用 OpenID。
 
 共 16 个集合。图片二进制存入私有云存储；数据库不是内存缓存，云函数结束后业务记录继续保存。回调先到时也可独立写 media_checks，资产后续通过 trace 关联。新模块所有排序键都是稳定字符串字段；收藏量变化会更新 rankKey，动态分页不承诺冻结排名。回收站字段只影响当前参与者的列表和详情访问，订单、留言及管理员审计仍保留。
+
+## 个人记录与回收站
+
+- 二手订单沿用 `buyer*` / `seller*` 独立归档字段。主动清理写入本人的 `ClearedAt`，保留 `OriginalArchiveExpiresAt`，并将 `ArchiveExpiresAt` 设为服务端当前时间，立即退出回收站查询。详情拒绝清理后的本人访问；不删除订单、留言或另一方字段。
+- 举报使用 `reporterArchived`、`reporterArchivedAt`、`reporterArchiveExpiresAt`、`reporterRetentionDays` 保存 7 / 30 天个人归档状态。未设置归档字段的历史记录仍显示在“我的举报”。
+- 举报清理设置 `reporterClearedAt`、`reporterOriginalArchiveExpiresAt`，同时终止恢复期限。恢复前必须核对本人身份、是否清理与服务端到期时间。
+- 这些操作不改举报 `status` / `resolution` / `handledAt`；管理员列表继续按业务处理状态查询。批量归档和清理每批最多 20 条，由已有事务与请求幂等入口执行。

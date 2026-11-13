@@ -7,6 +7,7 @@
 - `product_orders`：买家/卖家订单分页、状态筛选和管理端争议队列；独立的归档标记、到期过滤及回收站排序索引。
 - `product_messages`：按订单读取交易留言。
 - `media_assets` / `media_checks`：保留未绑定图片及审核记录的维护索引。
-- `tasks`、`posts`、`comments`、`reports`：继续使用现有任务、校园圈和举报查询索引。
+- `tasks`、`posts`、`comments`：继续使用现有任务、校园圈查询索引。
+- `reports`：保留管理员队列与历史索引，新增 `reporter_active_history` 和 `reporter_trash_history`，按本人、归档标记、到期时间查询个人举报记录。
 
 普通订单使用 `buyer_orders_archived` / `seller_orders_archived` 及角色+状态索引，兼容历史文档未设置归档字段；回收站按本人归档标记、过期时间和唯一归档键分页，不影响另一方查询。商品关键词当前使用转义后的不区分大小写正则，数据量增长后需实测查询耗时并评估专用搜索方案。

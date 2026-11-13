@@ -213,6 +213,14 @@
               -1
             ]
           ]
+        },
+        {
+          "name": "reporter_active_history",
+          "fields": [["reporterId", 1], ["reporterArchived", 1], ["createdAt", -1]]
+        },
+        {
+          "name": "reporter_trash_history",
+          "fields": [["reporterId", 1], ["reporterArchived", 1], ["reporterArchiveExpiresAt", 1], ["createdAt", -1]]
         }
       ]
     },

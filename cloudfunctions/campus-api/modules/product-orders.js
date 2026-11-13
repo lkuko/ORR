@@ -9,6 +9,7 @@ async function load(ctx, id) {
   check(order, 'ORDER_NOT_FOUND', '交易订单不存在')
   check(ctx.admin || [order.sellerId, order.buyerId].includes(ctx.actor.id), 'FORBIDDEN', '仅交易双方可查看此订单')
   const role = roleOf(order, ctx.actor.id)
+  check(ctx.admin || !order[role + 'ClearedAt'], 'RECORD_CLEARED', '这条记录已清理，无法恢复')
   check(ctx.admin || !order[role + 'Archived'] || order[role + 'ArchiveExpiresAt'] > ctx.now,
     'ARCHIVE_EXPIRED', '这条记录已超过回收站保留期')
   return order
@@ -106,6 +107,30 @@ const routes = {
         await ctx.store.put('product_orders', order.id, order)
       }
       return { order: view(order, ctx.actor.id) }
+    }
+  },
+  'productOrders.clear': {
+    write: true,
+    prepare(data) {
+      check(Array.isArray(data.ids) && data.ids.length > 0 && data.ids.length <= 20, 'INVALID_INPUT', '每次可清理 1 至 20 条记录')
+      return { ids: [...new Set(data.ids.map(v.id))] }
+    },
+    async run(ctx, data) {
+      for (const id of data.ids) {
+        const order = await ctx.store.get('product_orders', id)
+        check(order, 'ORDER_NOT_FOUND', '交易订单不存在')
+        check([order.buyerId, order.sellerId].includes(ctx.actor.id), 'FORBIDDEN', '只能清理自己的记录')
+        const role = roleOf(order, ctx.actor.id)
+        check(ENDED.includes(order.status) && order[role + 'Archived'] === true,
+          'INVALID_ORDER_STATE', '只能清理回收站内的已结束订单')
+        if (order[role + 'ClearedAt']) continue
+        // Keep the shared order and the other participant's history intact.
+        order[role + 'OriginalArchiveExpiresAt'] = order[role + 'ArchiveExpiresAt']
+        order[role + 'ArchiveExpiresAt'] = ctx.now
+        order[role + 'ClearedAt'] = ctx.now
+        await ctx.store.put('product_orders', id, order)
+      }
+      return { clearedIds: data.ids }
     }
   },
   'productOrders.send': {

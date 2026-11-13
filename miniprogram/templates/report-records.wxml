@@ -1,0 +1,18 @@
+<view class="reports-toolbar"><text>{{trashOnly ? '已删除的举报记录' : '举报记录'}}</text><button wx:if="{{trashOnly}}" class="clear-all" bindtap="clearAllReports" disabled="{{!!busyId || loading || !reports.length}}" loading="{{busyId === 'all'}}">全部清理</button><button wx:else class="clear-all delete-report" bindtap="removeAllReports" disabled="{{!!busyId || loading || !reports.length}}" loading="{{busyId === 'all'}}">全部删除</button></view>
+  <view class="reports-tip"><text class="cuIcon-info"></text><text>{{trashOnly ? '左滑可清理单条记录；清理后无法恢复。举报仍继续处理。' : '删除后可在“我的 → 回收站”恢复，举报仍继续处理。'}}</text></view>
+  <text wx:if="{{busyId === 'all'}}" class="cleanup-progress">正在处理，已完成 {{cleanupCount}} 条…</text>
+  <view wx:if="{{loading && !reports.length}}" class="loading-panel"><text class="loading-label">正在读取举报记录…</text></view>
+  <empty-state wx:elif="{{error && !reports.length}}" title="暂时未能读取举报" description="{{error}}" button-text="重试" bind:action="loadReports" />
+  <empty-state wx:elif="{{!reports.length}}" title="{{trashOnly ? '没有已删除的举报' : '暂无举报记录'}}" description="{{trashOnly ? '在我的举报中删除记录后，可在这里恢复或清理。' : '发现有问题的任务、商品、帖子或评论，可在对应页面举报。'}}" button-text="{{trashOnly ? '' : '去校园圈'}}" bind:action="goToForum" />
+  <swipe-row wx:for="{{reports}}" wx:key="id" record-id="{{item.id}}" enabled="{{trashOnly}}" open="{{swipeId === item.id}}" disabled="{{!!busyId}}" bind:reveal="reveal" bind:close="closeSwipe" bind:swiping="swiping" bind:clear="clearReport">
+    <view class="report-record {{item.id === highlight ? 'report-highlight' : ''}}">
+      <view class="record-heading"><text class="record-title">{{item.targetLabel}}举报</text><text class="report-status status-{{item.status}}">{{item.statusLabel}}</text></view>
+      <text wx:if="{{item.targetSummary}}" class="target-summary">{{item.targetSummary}}</text><text wx:else class="target-fallback">{{item.targetLabel}}编号 {{item.targetNumber}}</text>
+      <view class="record-section"><text class="record-label">举报原因</text><text class="record-content">{{item.reason}}</text></view>
+      <view class="record-result"><text class="result-title">{{item.status === 'OPEN' ? '等待核实' : '处理结果'}}</text><text class="result-content">{{item.status === 'OPEN' ? '管理员核实后，处理结果会显示在这里。' : (item.resolution || '管理员已完成处理。')}}</text><text wx:if="{{item.handledLabel}}" class="record-time">处理于 {{item.handledLabel}}</text></view>
+      <text wx:if="{{trashOnly}}" class="report-expiry">可恢复至 {{item.expiresLabel}}（{{item.retentionDays}} 天）</text>
+      <view class="record-footer"><text class="record-time">提交于 {{item.createdLabel}}</text><view class="report-actions"><block wx:if="{{trashOnly}}"><button class="clear-one" data-id="{{item.id}}" bindtap="clearReport" disabled="{{!!busyId}}">清理</button><button class="restore-report" data-id="{{item.id}}" bindtap="restoreReport" disabled="{{!!busyId}}" loading="{{busyId === item.id}}">恢复记录</button></block><button wx:else class="clear-one delete-report" data-id="{{item.id}}" bindtap="removeReport" disabled="{{!!busyId}}" loading="{{busyId === item.id}}">删除记录</button></view></view>
+    </view>
+  </swipe-row>
+  <text wx:if="{{error && reports.length}}" class="error-text">{{error}}</text>
+  <text wx:if="{{reports.length === 100}}" class="record-limit">显示最近 100 条记录；{{trashOnly ? '全部清理' : '全部删除'}}包含更早记录。</text>

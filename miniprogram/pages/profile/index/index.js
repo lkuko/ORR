@@ -1,4 +1,5 @@
 const auth = require('../../../services/auth')
+const { openOrderCenter } = require('../../../utils/order-center')
 
 Page({
   data: {
@@ -9,14 +10,11 @@ Page({
       this.setData({ error: error.message })
     })
   },
-  openOrders(event) {
-    const role = event.currentTarget.dataset.role
-    if (role) getApp().profileOrderRole = role
-    wx.switchTab({ url: '/pages/orders/list/index' })
-  },
+  openOrders(event) { openOrderCenter(event.currentTarget.dataset.kind || 'market', event.currentTarget.dataset.role) },
   openReports() { wx.navigateTo({ url: '/pages/report/list/index' }) },
+  openTrash() { wx.navigateTo({ url: '/pages/order-trash/index' }) },
   openProducts(event) { wx.navigateTo({ url: '/pages/products/library/index?mode=' + event.currentTarget.dataset.mode }) },
-  openTrades(event) { wx.navigateTo({ url: '/pages/product-orders/list/index?role=' + event.currentTarget.dataset.role }) },
+  openTrades(event) { openOrderCenter('market', event.currentTarget.dataset.role) },
   editNickname() {
     wx.showModal({ title: '设置昵称', editable: true, placeholderText: '输入校园昵称', success: result => {
       const nickname = (result.content || '').trim().slice(0, 40)

@@ -1,15 +1,1 @@
-@import "../../../styles/market.wxss";
-.order-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 16rpx; }
-.order-title { flex: 1; min-width: 0; font-size: 30rpx; font-weight: 600; line-height: 1.5; }
-.order-heading .cu-tag { flex: none; }
-.order-row .market-price { display: block; font-size: 36rpx; margin-top: 12rpx; }
-.order-hint { display: block; padding: 16rpx; margin-top: 20rpx; background: #f5f7fc; color: #4c5e7d; border-radius: 8rpx; font-size: 24rpx; }
-.trash-note { margin: 18rpx 0; }
-.role-switch { border-bottom: 1rpx solid #dfe5e9; }
-.role-switch button { flex: 1; text-align: center; font-size: 29rpx; }
-.record-filters { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8rpx; margin-top: 24rpx; }
-.record-filters button { width: 100%; min-width: 0; margin: 0; padding: 16rpx 0; min-height: 72rpx; font-size: 24rpx; line-height: 1.5; color: #66738a; background: #fff; border-radius: 12rpx; }
-.record-filters button.selected { color: #fff; background: #2854d9; }
-.record-actions { display: flex; align-items: center; gap: 20rpx; margin-top: 14rpx; padding-top: 10rpx; border-top: 1rpx solid #edf0f6; }
-.record-actions .text-button { min-width: 0; font-size: 25rpx; padding: 10rpx 0; }
-.record-actions .open-order { margin-left: auto; color: #2854d9; font-weight: 600; }
+@import "../../../styles/orders.wxss";

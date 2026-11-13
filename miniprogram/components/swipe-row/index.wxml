@@ -1,0 +1,4 @@
+<view class="swipe-row">
+  <button wx:if="{{enabled}}" class="swipe-clear" disabled="{{disabled}}" catchtap="clear" aria-label="清理这条记录">清理</button>
+  <view class="swipe-content {{dragging ? 'is-dragging' : ''}}" style="transform: translateX({{offset}}px)" bindtouchstart="start" bindtouchmove="move" bindtouchend="end" bindtouchcancel="cancel"><slot /></view>
+</view>

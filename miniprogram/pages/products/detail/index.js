@@ -44,7 +44,7 @@ Page({
     } catch (e) { wx.showToast({ title: e.message, icon: 'none' }) }
     finally { this.acting = false; this.setData({ acting: false }) }
   },
-  orders() { wx.navigateTo({ url: '/pages/product-orders/list/index?role=seller' }) },
+  orders() { require('../../../utils/order-center').openOrderCenter('market', 'seller') },
   report() { wx.navigateTo({ url: '/pages/report/create/index?type=PRODUCT&id=' + this.id }) },
   copy() { wx.setClipboardData({ data: this.id }) }
 })
