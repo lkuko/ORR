@@ -1,7 +1,7 @@
 const v = require('../lib/validation')
 const { check } = require('../lib/errors')
 const { taskView, participant } = require('../lib/views')
-const { loadTask, saveTask, activeParticipants } = require('../lib/task-records')
+const { loadTask, saveTask, activeParticipants, assertRecordAccess } = require('../lib/task-records')
 const categories = ['PACKAGE', 'FOOD', 'ERRAND', 'OTHER']
 function prepareTask(data) {
   const deadline = data.deadlineAt ? new Date(data.deadlineAt) : null
@@ -21,6 +21,7 @@ function prepareTask(data) {
 async function visibleTask(ctx, id) {
   const task = await loadTask(ctx.store, v.id(id))
   check(task.visibility === 'VISIBLE' || participant(task, ctx.actor.id), 'TASK_NOT_FOUND', '任务不存在或已下架')
+  assertRecordAccess(ctx, task)
   return task
 }
 const routes = {
@@ -31,8 +32,20 @@ const routes = {
     return { tasks: tasks.filter(task => !task.deadlineAt || task.deadlineAt > ctx.now).map(task => taskView(task, ctx.actor.id, true)) }
   }},
   'tasks.mine': { async run(ctx, data) {
-    const key = data.role === 'helper' ? 'helperId' : 'ownerId'
-    return { tasks: (await ctx.store.list('tasks', { [key]: ctx.actor.id }, 'updatedAt')).map(task => taskView(task, ctx.actor.id)) }
+    check(!data.role || ['owner', 'helper'].includes(data.role), 'INVALID_INPUT', '订单角色无效')
+    check(!data.view || ['list', 'trash'].includes(data.view), 'INVALID_INPUT', '列表类型无效')
+    check(!data.status || ['all', 'active', 'ended'].includes(data.status), 'INVALID_INPUT', '订单状态无效')
+    const role = data.role === 'helper' ? 'helper' : 'owner', trash = data.view === 'trash'
+    let before = ctx.now
+    if (data.before !== undefined) {
+      check(typeof data.before === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(data.before) && Number.isFinite(Date.parse(data.before)), 'INVALID_INPUT', '记录时间无效')
+      before = data.before < ctx.now ? data.before : ctx.now
+    }
+    const filter = { [role + 'Id']: ctx.actor.id, [role + 'Archived']: trash ? true : { $ne: true }, createdAt: { $lte: before } }
+    if (trash) filter[role + 'ArchiveExpiresAt'] = { $gt: ctx.now }
+    if (data.status === 'ended') filter.status = { $in: ['COMPLETED', 'CANCELLED'] }
+    else if (data.status === 'active') filter.status = { $in: ['OPEN', 'ASSIGNED', 'COMPLETION_PENDING', 'CANCEL_PENDING', 'CANCEL_DISPUTED'] }
+    return { snapshotAt: ctx.now, tasks: (await ctx.store.list('tasks', filter, 'updatedAt', 'desc', 100)).map(task => taskView(task, ctx.actor.id)) }
   }},
   'tasks.get': { async run(ctx, data) { return { task: taskView(await visibleTask(ctx, data.id), ctx.actor.id) } }},
   'tasks.create': {
@@ -101,4 +114,4 @@ for (const action of ['accept', 'complete', 'confirm', 'cancel', 'cancel-request
     }
   }
 }
-module.exports = routes
+module.exports = { ...routes, ...require('./task-archives') }

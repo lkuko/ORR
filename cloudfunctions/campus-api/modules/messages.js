@@ -1,11 +1,12 @@
 const v = require('../lib/validation')
 const { check } = require('../lib/errors')
 const { participant, messageView } = require('../lib/views')
-const { loadTask, activeParticipants } = require('../lib/task-records')
+const { loadTask, activeParticipants, assertRecordAccess } = require('../lib/task-records')
 module.exports = {
   'messages.list': { async run(ctx, data) {
     const task = await loadTask(ctx.store, v.id(data.id))
     check(participant(task, ctx.actor.id), 'FORBIDDEN', '只有订单双方可以查看留言')
+    assertRecordAccess(ctx, task)
     return { messages: (await ctx.store.list('task_messages', { taskId: task.id }, 'createdAt', 'desc', 200)).reverse().map(messageView) }
   }},
   'messages.send': {

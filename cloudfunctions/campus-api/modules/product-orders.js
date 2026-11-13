@@ -147,6 +147,18 @@ const routes = {
     }
   }
 }
+routes['productOrders.archiveMany'] = {
+  write: true,
+  prepare(data) {
+    check(Array.isArray(data.ids) && data.ids.length > 0 && data.ids.length <= 20, 'INVALID_INPUT', '每次可删除 1 至 20 条记录')
+    check([7, 30].includes(data.days), 'INVALID_INPUT', '保留期只能选择 7 天或 30 天')
+    return { ids: [...new Set(data.ids.map(v.id))], days: data.days }
+  },
+  async run(ctx, data) {
+    for (const id of data.ids) await routes['productOrders.archive'].run(ctx, { id, days: data.days })
+    return { clearedIds: data.ids }
+  }
+}
 for (const action of ['accept', 'confirm', 'cancel', 'cancelRespond']) {
   routes['productOrders.' + action] = {
     write: true,

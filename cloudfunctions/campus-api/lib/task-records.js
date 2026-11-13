@@ -1,6 +1,14 @@
 const { check } = require('./errors')
 const { hash } = require('./validation')
 const active = task => !['COMPLETED', 'CANCELLED'].includes(task.status)
+const taskRole = (task, actorId) => task.ownerId === actorId ? 'owner' : 'helper'
+function assertRecordAccess(ctx, task) {
+  if (ctx.admin || ![task.ownerId, task.helperId].includes(ctx.actor.id)) return
+  const role = taskRole(task, ctx.actor.id)
+  check(!task[role + 'ClearedAt'], 'RECORD_CLEARED', '这条记录已清理，无法恢复')
+  check(!task[role + 'Archived'] || task[role + 'ArchiveExpiresAt'] > ctx.now,
+    'ARCHIVE_EXPIRED', '这条记录已超过回收站保留期')
+}
 async function loadTask(store, id) {
   const task = await store.get('tasks', id)
   check(task, 'TASK_NOT_FOUND', '任务不存在')
@@ -29,4 +37,4 @@ async function activeParticipants(store, task) {
     check(user && user.status === 'ACTIVE', 'PARTICIPANT_BLOCKED', '参与者账号已停用，请联系管理员处理')
   }
 }
-module.exports = { active, loadTask, saveTask, activeParticipants }
+module.exports = { active, loadTask, saveTask, activeParticipants, taskRole, assertRecordAccess }

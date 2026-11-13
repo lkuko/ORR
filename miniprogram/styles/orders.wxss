@@ -12,15 +12,11 @@
 .status-tabs { display: flex; gap: 6rpx; padding-top: 8rpx; }
 .order-center .status-tabs button { flex: 1; min-width: 0; padding: 22rpx 0 12rpx; min-height: 80rpx; color: #64748b; background: transparent; font-size: 25rpx; font-weight: 400; }
 .order-center .status-tabs .selected { color: #2854d9; font-weight: 700; }
-.trash-toolbar { display: flex; align-items: center; gap: 16rpx; margin-bottom: 24rpx; }
-.trash-toolbar > view { flex: 1; min-width: 0; }
 .toolbar-title, .toolbar-note { display: block; }
 .toolbar-title { color: #152c48; font-size: 26rpx; font-weight: 600; }
 .toolbar-note { margin-top: 6rpx; color: #64748b; font-size: 22rpx; }
-.order-center .clear-all { flex: none; width: auto; padding: 18rpx 16rpx; background: #fff; color: #aa3e3e; font-size: 24rpx; }
 .cleanup-progress { margin-bottom: 20rpx; padding: 20rpx; color: #64748b; font-size: 24rpx; }
 .order-card { overflow: hidden; border: 1rpx solid #e4eaf3; border-radius: 22rpx; background: #fff; }
-.task-card { margin-bottom: 20rpx; }
 .order-main { padding: 26rpx 26rpx 0; }
 .order-top { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12rpx; }
 .order-number { color: #75849a; font-size: 22rpx; }
@@ -34,12 +30,9 @@
 .order-person { display: block; margin-top: 10rpx; color: #64748b; font-size: 24rpx; }
 .order-next { margin-top: 22rpx; padding: 18rpx 20rpx; background: #f4f7fd; color: #52617a; border-radius: 12rpx; font-size: 24rpx; line-height: 1.65; }
 .archive-hint { background: #fff8e9; color: #806640; }
-.order-footer { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8rpx 12rpx; padding: 14rpx 26rpx; }
-.order-date { flex: 1; color: #75849a; font-size: 21rpx; }
-.order-actions { display: flex; align-items: center; flex-wrap: wrap; justify-content: flex-end; gap: 12rpx; max-width: 100%; }
-.order-center .quiet-action { width: auto; min-width: 88rpx; padding: 20rpx 4rpx; background: transparent; color: #64748b; font-size: 24rpx; font-weight: 400; }
-.order-center .danger-link { color: #aa3e3e; }
-.order-center .order-cta { display: flex; align-items: center; justify-content: center; gap: 6rpx; width: auto; min-width: 152rpx; min-height: 80rpx; padding: 20rpx; border-radius: 12rpx; background: #2854d9; color: #fff; font-size: 25rpx; }
-.order-center .secondary-cta { color: #2854d9; background: #eaf0ff; }
-.task-footer { display: flex; align-items: center; justify-content: flex-end; gap: 12rpx; min-height: 88rpx; padding: 20rpx 26rpx; color: #2854d9; font-size: 25rpx; font-weight: 600; }
+.order-footer { padding: 20rpx 26rpx 24rpx; }
+.order-date { display: block; color: #75849a; font-size: 21rpx; }
 .order-center .load-more { width: 100%; margin-top: 24rpx; background: #fff; color: #2854d9; }
+
+.order-center .kind-tabs { gap: 4rpx; }
+.order-center .kind-tab { font-size: 28rpx; }

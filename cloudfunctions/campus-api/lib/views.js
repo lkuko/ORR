@@ -3,6 +3,8 @@ const participant = (task, userId) => task.ownerId === userId || task.helperId =
 function userView(user) { return { id: user.id, nickname: user.nickname, status: user.status, createdAt: user.createdAt } }
 function taskView(task, userId, publicOnly = false) {
   const privateAccess = !publicOnly && participant(task, userId)
+  const role = task.ownerId === userId ? 'owner' : 'helper'
+  const archived = privateAccess && task[role + 'Archived'] === true
   return {
     id: task.id, ownerId: task.ownerId, helperId: task.helperId,
     ownerNickname: task.ownerNickname, helperNickname: task.helperNickname,
@@ -13,7 +15,8 @@ function taskView(task, userId, publicOnly = false) {
     status: task.status, visibility: task.visibility,
     createdAt: task.createdAt, updatedAt: task.updatedAt,
     cancelRequestedBy: privateAccess ? task.cancelRequestedBy : null,
-    cancelReason: privateAccess ? task.cancelReason : null
+    cancelReason: privateAccess ? task.cancelReason : null,
+    archived, ...(archived ? { archivedAt: task[role + 'ArchivedAt'], archiveExpiresAt: task[role + 'ArchiveExpiresAt'], retentionDays: task[role + 'RetentionDays'] } : {})
   }
 }
 function postView(post) {

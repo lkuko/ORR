@@ -1,6 +1,8 @@
 const tasksApi = require('../../../services/tasks')
 const { taskHint } = require('../../../utils/task-ui')
 const { shortId } = require('../../../utils/format')
+const { chooseRetentionDays } = require('../../../utils/trade-record')
+const { confirm } = require('../../../utils/dialog')
 
 Page({
   data: { id: '', task: null, orderNumber: '', showCancellation: false, nextHint: '', userId: '', isOwner: false, isHelper: false, isParticipant: false, canDecideCancel: false, messages: [], message: '', sendingMessage: false, loading: false, error: '', acting: false },
@@ -108,6 +110,25 @@ Page({
       this.setData({ sendingMessage: false })
     })
     return this.sendPromise
+  },
+  async changeRecord(event) {
+    const restore = event.currentTarget.dataset.action === 'restore'
+    if (this.data.acting || !this.data.isParticipant || !this.data.task ||
+      (restore ? !this.data.task.archived : !this.data.task.canArchive)) return
+    this.setData({ acting: true })
+    try {
+      if (restore) this.setTask(await tasksApi.restore(this.data.id))
+      else {
+        const days = await chooseRetentionDays()
+        if (!days) return
+        const decision = await confirm('删除这条记录？', '这条跑腿订单将移入回收站，保留 ' + days + ' 天。另一方的记录不受影响。')
+        if (!decision.confirm) return
+        await tasksApi.archive([this.data.id], days)
+        await this.load()
+      }
+      wx.showToast({ title: restore ? '已恢复记录' : '已移入回收站', icon: 'success' })
+    } catch (error) { wx.showToast({ title: error.message, icon: 'none' }) }
+    finally { this.setData({ acting: false }) }
   },
   report() {
     wx.navigateTo({ url: `/pages/report/create/index?type=TASK&id=${this.data.id}` })

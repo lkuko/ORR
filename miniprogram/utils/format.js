@@ -13,7 +13,8 @@ function dateTime(value) {
 }
 function taskView(task) {
   const rewardLabel = task.rewardAmount == null ? '互助' : '¥' + Number(task.rewardAmount).toFixed(2)
-  return { ...task, categoryLabel: categoryLabels[task.category] || '其他', statusLabel: statusLabels[task.status] || '未知状态', createdLabel: dateTime(task.createdAt), deadlineLabel: dateTime(task.deadlineAt), rewardLabel, hasReward: task.rewardAmount !== null && task.rewardAmount !== undefined, expired: !!task.deadlineAt && new Date(task.deadlineAt).getTime() <= Date.now() }
+  return { ...task, categoryLabel: categoryLabels[task.category] || '其他', statusLabel: statusLabels[task.status] || '未知状态', createdLabel: dateTime(task.createdAt), deadlineLabel: dateTime(task.deadlineAt), rewardLabel, hasReward: task.rewardAmount !== null && task.rewardAmount !== undefined, expired: !!task.deadlineAt && new Date(task.deadlineAt).getTime() <= Date.now(),
+    canArchive: ['COMPLETED', 'CANCELLED'].includes(task.status) && !task.archived, expiresLabel: dateTime(task.archiveExpiresAt) }
 }
 function commentView(comment) {
   return { ...comment, authorInitial: (comment.authorNickname || '同').slice(0, 1), createdLabel: dateTime(comment.createdAt) }

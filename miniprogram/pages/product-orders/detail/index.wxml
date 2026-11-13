@@ -39,9 +39,9 @@
         <text>{{order.archived ? '到期前可恢复到你的交易记录' : order.status === 'ACCEPTED' ? (order.isBuyer ? '收到商品并完成付款后，再确认' : '商品已预留，直接与买家约好交付') : order.active ? order.hint : '已结束的交易可移入个人回收站'}}</text>
         <button wx:if="{{order.status === 'ACCEPTED' || (order.status === 'PENDING' && order.isBuyer)}}" class="text-button" data-action="cancel" bindtap="action" disabled="{{acting || sending}}">{{order.status === 'PENDING' ? '取消预约' : '申请取消'}}</button>
       </view>
-      <view class="market-actions dock-buttons">
-        <block wx:if="{{order.archived}}"><button class="cu-btn bg-blue" bindtap="restore" disabled="{{acting}}" loading="{{acting}}">恢复记录</button></block>
-        <block wx:elif="{{order.canArchive}}"><button class="cu-btn bg-gray" bindtap="archive" disabled="{{acting}}">删除我的记录</button></block>
+      <view class="market-actions dock-buttons {{order.archived || order.canArchive ? 'record-action-row' : ''}}">
+        <block wx:if="{{order.archived}}"><button class="record-action record-secondary" bindtap="restore" disabled="{{acting}}" loading="{{acting}}">恢复记录</button></block>
+        <block wx:elif="{{order.canArchive}}"><button class="record-action record-danger" bindtap="archive" disabled="{{acting}}">删除记录</button></block>
         <block wx:elif="{{order.status === 'PENDING' && order.isSeller}}"><button class="cu-btn bg-gray" data-action="cancel" bindtap="action" disabled="{{acting}}">拒绝预约</button><button class="cu-btn bg-blue" data-action="accept" bindtap="action" disabled="{{acting}}">确认预约</button></block>
         <block wx:elif="{{order.canRespond}}"><button class="cu-btn bg-gray" data-action="cancelRespond" data-agree="{{false}}" bindtap="action" disabled="{{acting}}">申请管理员处理</button><button class="cu-btn bg-blue" data-action="cancelRespond" data-agree="{{true}}" bindtap="action" disabled="{{acting}}">同意取消</button></block>
         <block wx:else><button class="cu-btn {{order.status === 'ACCEPTED' && order.isBuyer ? 'bg-gray' : 'bg-blue'}}" bindtap="contact" disabled="{{acting}}">联系{{order.isBuyer ? '卖家' : '买家'}}</button><button wx:if="{{order.status === 'ACCEPTED' && order.isBuyer}}" class="cu-btn bg-blue" data-action="confirm" bindtap="action" disabled="{{acting || sending}}" loading="{{acting}}">确认交易完成</button></block>

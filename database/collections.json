@@ -89,6 +89,30 @@
           ]
         },
         {
+          "name": "owner_record_history",
+          "fields": [["ownerId", 1], ["ownerArchived", 1], ["updatedAt", -1], ["createdAt", 1]]
+        },
+        {
+          "name": "owner_record_status",
+          "fields": [["ownerId", 1], ["ownerArchived", 1], ["status", 1], ["updatedAt", -1], ["createdAt", 1]]
+        },
+        {
+          "name": "owner_record_trash",
+          "fields": [["ownerId", 1], ["ownerArchived", 1], ["ownerArchiveExpiresAt", 1], ["updatedAt", -1], ["createdAt", 1]]
+        },
+        {
+          "name": "helper_record_history",
+          "fields": [["helperId", 1], ["helperArchived", 1], ["updatedAt", -1], ["createdAt", 1]]
+        },
+        {
+          "name": "helper_record_status",
+          "fields": [["helperId", 1], ["helperArchived", 1], ["status", 1], ["updatedAt", -1], ["createdAt", 1]]
+        },
+        {
+          "name": "helper_record_trash",
+          "fields": [["helperId", 1], ["helperArchived", 1], ["helperArchiveExpiresAt", 1], ["updatedAt", -1], ["createdAt", 1]]
+        },
+        {
           "name": "cancellations",
           "fields": [
             [

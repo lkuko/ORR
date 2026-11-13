@@ -1,0 +1,8 @@
+.records-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 20rpx; margin: 22rpx 0; }
+.records-toolbar > view, .records-toolbar > text { flex: 1; min-width: 0; }
+.record-action-row { display: flex; align-items: center; justify-content: flex-end; gap: 16rpx; width: 100%; margin-top: 16rpx; }
+.page .record-action, .market-page .record-action { display: flex; flex: 0 0 176rpx; align-items: center; justify-content: center; box-sizing: border-box; width: 176rpx; min-width: 0; height: 84rpx; min-height: 84rpx; margin: 0; padding: 0 12rpx; border: 2rpx solid transparent; border-radius: 12rpx; font-size: 25rpx; font-weight: 600; line-height: 1.4; white-space: nowrap; }
+.page .record-danger, .market-page .record-danger { order: 2; color: #b43d3d; border-color: #d96b6b; background: #fff; }
+.page .record-secondary, .market-page .record-secondary { color: #2854d9; background: #eaf0ff; border-color: #d8e3ff; }
+.page .record-primary, .market-page .record-primary { color: #fff; background: #2854d9; }
+.page .record-action[disabled], .market-page .record-action[disabled] { border-color: #d6dce6; }

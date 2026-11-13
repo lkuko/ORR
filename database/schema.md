@@ -33,3 +33,5 @@
 - 举报使用 `reporterArchived`、`reporterArchivedAt`、`reporterArchiveExpiresAt`、`reporterRetentionDays` 保存 7 / 30 天个人归档状态。未设置归档字段的历史记录仍显示在“我的举报”。
 - 举报清理设置 `reporterClearedAt`、`reporterOriginalArchiveExpiresAt`，同时终止恢复期限。恢复前必须核对本人身份、是否清理与服务端到期时间。
 - 这些操作不改举报 `status` / `resolution` / `handledAt`；管理员列表继续按业务处理状态查询。批量归档和清理每批最多 20 条，由已有事务与请求幂等入口执行。
+
+跑腿任务新增个人归档字段：`ownerArchived` / `helperArchived`，以及对应的 `ArchivedAt`、`ArchiveExpiresAt`、`RetentionDays`、`ClearedAt`、`OriginalArchiveExpiresAt`。新旧文档共存，字段缺省表示未归档。仅归档/清理自己的 `COMPLETED` 或 `CANCELLED` 任务；不会修改 `updatedAt`，列表仍按最后业务更新时间排序。恢复只清除本人归档字段，无法恢复已过期/清理记录。
